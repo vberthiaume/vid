@@ -5,23 +5,20 @@ void ofApp::setup(){
 
 	ofBackground(40, 100, 40);
     
-    pi1_ip = "localhost";
+    pi1_ip = "192.168.1.107";
     pi2_ip = "localhost";
     pi3_ip = "localhost";
     pi4_ip = "localhost";
     
     iPiPort = 9000;
     
-    folder_path = "/home/pi/Desktop/";
+    folder_path = "/media/pi/OSX_extended_journaled";
 
 	// open outgoing connections
 	sender1.setup(pi1_ip, iPiPort);
-    sender2.setup(pi1_ip, iPiPort);
-    sender3.setup(pi1_ip, iPiPort);
-    sender4.setup(pi1_ip, iPiPort);
-    
-    imgAsBuffer = ofBufferFromFile("of-logo.png", true);
-
+    sender2.setup(pi2_ip, iPiPort);
+    sender3.setup(pi3_ip, iPiPort);
+    sender4.setup(pi4_ip, iPiPort);
 }
 
 //--------------------------------------------------------------
@@ -39,7 +36,7 @@ void ofApp::draw(){
     
 	// display instructions
 	string buf;
-	buf = "sending osc messages to " + pi1_ip + ofToString(iPiPort);
+	buf = "sending osc messages to " + pi1_ip + ":" + ofToString(iPiPort);
 	ofDrawBitmapString(buf, 10, 20);
 	ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 50);
     ofDrawBitmapString("press P to play all videos one shot [/play " + folder_path + "]", 10, 65);
@@ -61,25 +58,25 @@ void ofApp::keyPressed(int key){
         sender3.sendMessage(m, false);
         sender4.sendMessage(m, false);
 	}
-    
-    //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
-
+    //play videos one shot
     if( key == 'p' || key == 'P'){
         ofxOscMessage m;
-        m.setAddress("/play " + folder_path);
-        sender1.sendMessage(m);
-        sender2.sendMessage(m);
-        sender3.sendMessage(m);
-        sender4.sendMessage(m);
+        m.setAddress("/play");
+        m.addStringArg(folder_path);
+        sender1.sendMessage(m, false);
+        sender2.sendMessage(m, false);
+        sender3.sendMessage(m, false);
+        sender4.sendMessage(m, false);
     }
-    
+    //play videos in a loop
     if( key == 'l' || key == 'L'){
         ofxOscMessage m;
-        m.setAddress("/playloop " + folder_path);
-        sender1.sendMessage(m);
-        sender2.sendMessage(m);
-        sender3.sendMessage(m);
-        sender4.sendMessage(m);
+        m.setAddress("/playloop");
+        m.addStringArg(folder_path);
+        sender1.sendMessage(m, false);
+        sender2.sendMessage(m, false);
+        sender3.sendMessage(m, false);
+        sender4.sendMessage(m, false);
     }
 }
 
@@ -95,9 +92,9 @@ void ofApp::mouseMoved(int x, int y){
 //	m.addIntArg(x);
 //	m.addIntArg(y);
 //	sender1.sendMessage(m, false);
-//    sender2.sendMessage(m, false);
-//    sender3.sendMessage(m, false);
-//    sender4.sendMessage(m, false);
+//  sender2.sendMessage(m, false);
+//  sender3.sendMessage(m, false);
+//  sender4.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
