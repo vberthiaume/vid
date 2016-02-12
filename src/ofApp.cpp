@@ -4,9 +4,21 @@
 void ofApp::setup(){
 
 	ofBackground(40, 100, 40);
+    
+    pi1_ip = "localhost";
+    pi2_ip = "localhost";
+    pi3_ip = "localhost";
+    pi4_ip = "localhost";
+    
+    iPiPort = 9000;
+    
+    folder_path = "/home/pi/Desktop/";
 
-	// open an outgoing connection to HOST:PORT
-	sender.setup(HOST, PORT);
+	// open outgoing connections
+	sender1.setup(pi1_ip, iPiPort);
+    sender2.setup(pi1_ip, iPiPort);
+    sender3.setup(pi1_ip, iPiPort);
+    sender4.setup(pi1_ip, iPiPort);
     
     imgAsBuffer = ofBufferFromFile("of-logo.png", true);
 
@@ -27,13 +39,11 @@ void ofApp::draw(){
     
 	// display instructions
 	string buf;
-	buf = "sending osc messages to" + string(HOST) + ofToString(PORT);
+	buf = "sending osc messages to " + pi1_ip + ofToString(iPiPort);
 	ofDrawBitmapString(buf, 10, 20);
-	ofDrawBitmapString("move the mouse to send osc message [/mouse/position <x> <y>]", 10, 50);
-	ofDrawBitmapString("click to send osc message [/mouse/button <button> <\"up\"|\"down\">]", 10, 65);
-	ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 80);
-	ofDrawBitmapString("press I to send a (small) image as a osc blob to [/image]", 10, 95);
-
+	ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 50);
+    ofDrawBitmapString("press P to play all videos one shot [/play " + folder_path + "]", 10, 65);
+    ofDrawBitmapString("press L to loop all videos [/playloop " + folder_path + "]", 10, 80);
 }
 
 //--------------------------------------------------------------
@@ -45,19 +55,31 @@ void ofApp::keyPressed(int key){
 		m.addFloatArg(3.5f);
 		m.addStringArg("hello");
 		m.addFloatArg(ofGetElapsedTimef());
-		sender.sendMessage(m, false);
+		
+        sender1.sendMessage(m, false);
+        sender2.sendMessage(m, false);
+        sender3.sendMessage(m, false);
+        sender4.sendMessage(m, false);
 	}
     
     //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
 
-    if( key == 'i' || key == 'I'){
-        img.load(imgAsBuffer);
-
+    if( key == 'p' || key == 'P'){
         ofxOscMessage m;
-        m.setAddress("/image");
-        m.addBlobArg(imgAsBuffer);
-        sender.sendMessage(m);
-        cout << "ofApp:: sending image with size: " << imgAsBuffer.size() << endl;
+        m.setAddress("/play " + folder_path);
+        sender1.sendMessage(m);
+        sender2.sendMessage(m);
+        sender3.sendMessage(m);
+        sender4.sendMessage(m);
+    }
+    
+    if( key == 'l' || key == 'L'){
+        ofxOscMessage m;
+        m.setAddress("/playloop " + folder_path);
+        sender1.sendMessage(m);
+        sender2.sendMessage(m);
+        sender3.sendMessage(m);
+        sender4.sendMessage(m);
     }
 }
 
@@ -68,11 +90,14 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-	ofxOscMessage m;
-	m.setAddress("/mouse/position");
-	m.addIntArg(x);
-	m.addIntArg(y);
-	sender.sendMessage(m, false);
+//	ofxOscMessage m;
+//	m.setAddress("/mouse/position");
+//	m.addIntArg(x);
+//	m.addIntArg(y);
+//	sender1.sendMessage(m, false);
+//    sender2.sendMessage(m, false);
+//    sender3.sendMessage(m, false);
+//    sender4.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
@@ -82,21 +107,26 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	ofxOscMessage m;
-	m.setAddress("/mouse/button");
-	m.addIntArg(button);
-	m.addStringArg("down");
-	sender.sendMessage(m, false);
+//	ofxOscMessage m;
+//	m.setAddress("/mouse/button");
+//	m.addIntArg(button);
+//	m.addStringArg("down");
+//    sender1.sendMessage(m, false);
+//    sender2.sendMessage(m, false);
+//    sender3.sendMessage(m, false);
+//    sender4.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	ofxOscMessage m;
-	m.setAddress("/mouse/button");
-	m.addIntArg(button);
-	m.addStringArg("up");
-	sender.sendMessage(m, false);
-
+//	ofxOscMessage m;
+//	m.setAddress("/mouse/button");
+//	m.addIntArg(button);
+//	m.addStringArg("up");
+//    sender1.sendMessage(m, false);
+//    sender2.sendMessage(m, false);
+//    sender3.sendMessage(m, false);
+//    sender4.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
