@@ -5,6 +5,7 @@ void ofApp::setup(){
 
 	ofBackground(40, 100, 40);
     
+//    pi1_ip = "169.254.77.225";
     pi1_ip = "192.168.1.107";
     pi2_ip = "localhost";
     pi3_ip = "localhost";
@@ -37,10 +38,23 @@ void ofApp::draw(){
 	// display instructions
 	string buf;
 	buf = "sending osc messages to " + pi1_ip + ":" + ofToString(iPiPort);
-	ofDrawBitmapString(buf, 10, 20);
-	ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 50);
-    ofDrawBitmapString("press P to play all videos one shot [/play " + folder_path + "]", 10, 65);
-    ofDrawBitmapString("press L to loop all videos [/playloop " + folder_path + "]", 10, 80);
+    int y = 20;
+	ofDrawBitmapString(buf, 10, y);
+    y += 30;
+//	  ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 50);
+//    y += 15;
+    ofDrawBitmapString("press P to play all videos one shot", 10, y);
+    y += 15;
+    ofDrawBitmapString("press L to loop all videos", 10, y);
+    y += 15;
+    ofDrawBitmapString("press S to stop playing", 10, y);
+    y += 15;
+    ofDrawBitmapString("press N to start next video", 10, y);
+    y += 15;
+    ofDrawBitmapString("press B to go back to previous video", 10, y);
+    y += 15;
+    ofDrawBitmapString("press I to toggle info screen", 10, y);
+    y += 15;
 }
 
 //--------------------------------------------------------------
@@ -58,8 +72,8 @@ void ofApp::keyPressed(int key){
         sender3.sendMessage(m, false);
         sender4.sendMessage(m, false);
 	}
-    //play videos one shot
-    if( key == 'p' || key == 'P'){
+    //play videos one shot(p) or in a loop(l)
+    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
         ofxOscMessage m;
         m.setAddress("/play");
         m.addStringArg(folder_path);
@@ -67,12 +81,47 @@ void ofApp::keyPressed(int key){
         sender2.sendMessage(m, false);
         sender3.sendMessage(m, false);
         sender4.sendMessage(m, false);
+        
+        if(key == 'p' || key == 'P'){
+            ofxOscMessage m;
+            m.setAddress("/unloop");
+            sender1.sendMessage(m, false);
+            sender2.sendMessage(m, false);
+            sender3.sendMessage(m, false);
+            sender4.sendMessage(m, false);
+        }
     }
-    //play videos in a loop
-    if( key == 'l' || key == 'L'){
+    //stop playing
+    if( key == 's' || key == 'S'){
         ofxOscMessage m;
-        m.setAddress("/playloop");
-        m.addStringArg(folder_path);
+        m.setAddress("/stop");
+        sender1.sendMessage(m, false);
+        sender2.sendMessage(m, false);
+        sender3.sendMessage(m, false);
+        sender4.sendMessage(m, false);
+    }
+    //play next video
+    if( key == 'n' || key == 'N'){
+        ofxOscMessage m;
+        m.setAddress("/next");
+        sender1.sendMessage(m, false);
+        sender2.sendMessage(m, false);
+        sender3.sendMessage(m, false);
+        sender4.sendMessage(m, false);
+    }
+    //play previous video
+    if( key == 'b' || key == 'B'){
+        ofxOscMessage m;
+        m.setAddress("/prev");
+        sender1.sendMessage(m, false);
+        sender2.sendMessage(m, false);
+        sender3.sendMessage(m, false);
+        sender4.sendMessage(m, false);
+    }
+    //toggle info screen
+    if( key == 'i' || key == 'I'){
+        ofxOscMessage m;
+        m.setAddress("/info");
         sender1.sendMessage(m, false);
         sender2.sendMessage(m, false);
         sender3.sendMessage(m, false);

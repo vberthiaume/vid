@@ -127,4 +127,5 @@ Desktop.ini
 
 .mailmap
 /apps*/
-
+*.mp3
+*.wav
