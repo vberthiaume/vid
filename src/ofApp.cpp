@@ -5,21 +5,22 @@ void ofApp::setup(){
 
 	ofBackground(40, 100, 40);
     
-//    pi1_ip = "169.254.77.225";
-    pi1_ip = "192.168.1.107";
-    pi2_ip = "localhost";
-    pi3_ip = "localhost";
-    pi4_ip = "localhost";
+    pi1_ip = "192.168.0.101";
+    pi2_ip = "192.168.0.102";
+    pi3_ip = "192.168.0.103";
+    pi4_ip = "192.168.0.104";
     
     iPiPort = 9000;
     
-    folder_path = "/media/pi/OSX_extended_journaled";
+    folder_path = "/media/pi/OSX_extended_journaled/";
 
 	// open outgoing connections
 	sender1.setup(pi1_ip, iPiPort);
     sender2.setup(pi2_ip, iPiPort);
     sender3.setup(pi3_ip, iPiPort);
     sender4.setup(pi4_ip, iPiPort);
+    
+    soundPlayer.load("/Users/nicolai/Downloads/PERTURBATOR.mp3");
 }
 
 //--------------------------------------------------------------
@@ -49,29 +50,32 @@ void ofApp::draw(){
     y += 15;
     ofDrawBitmapString("press S to stop playing", 10, y);
     y += 15;
-    ofDrawBitmapString("press N to start next video", 10, y);
-    y += 15;
-    ofDrawBitmapString("press B to go back to previous video", 10, y);
-    y += 15;
+//    ofDrawBitmapString("press N to start next video", 10, y);
+//    y += 15;
+//    ofDrawBitmapString("press B to go back to previous video", 10, y);
+//    y += 15;
     ofDrawBitmapString("press I to toggle info screen", 10, y);
     y += 15;
 }
 
+
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	if(key == 'a' || key == 'A'){
-		ofxOscMessage m;
-		m.setAddress("/test");
-		m.addIntArg(1);
-		m.addFloatArg(3.5f);
-		m.addStringArg("hello");
-		m.addFloatArg(ofGetElapsedTimef());
-		
-        sender1.sendMessage(m, false);
-        sender2.sendMessage(m, false);
-        sender3.sendMessage(m, false);
-        sender4.sendMessage(m, false);
-	}
+//	if(key == 'a' || key == 'A'){
+//		ofxOscMessage m;
+//		m.setAddress("/test");
+//		m.addIntArg(1);
+//		m.addFloatArg(3.5f);
+//		m.addStringArg("hello");
+//		m.addFloatArg(ofGetElapsedTimef());
+//		
+//        sender1.sendMessage(m, false);
+//        sender2.sendMessage(m, false);
+//        sender3.sendMessage(m, false);
+//        sender4.sendMessage(m, false);
+//
+//	}
     //play videos one shot(p) or in a loop(l)
     if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
         ofxOscMessage m;
@@ -90,6 +94,7 @@ void ofApp::keyPressed(int key){
             sender3.sendMessage(m, false);
             sender4.sendMessage(m, false);
         }
+        soundPlayer.play();
     }
     //stop playing
     if( key == 's' || key == 'S'){
@@ -99,25 +104,26 @@ void ofApp::keyPressed(int key){
         sender2.sendMessage(m, false);
         sender3.sendMessage(m, false);
         sender4.sendMessage(m, false);
+        soundPlayer.stop();
     }
-    //play next video
-    if( key == 'n' || key == 'N'){
-        ofxOscMessage m;
-        m.setAddress("/next");
-        sender1.sendMessage(m, false);
-        sender2.sendMessage(m, false);
-        sender3.sendMessage(m, false);
-        sender4.sendMessage(m, false);
-    }
-    //play previous video
-    if( key == 'b' || key == 'B'){
-        ofxOscMessage m;
-        m.setAddress("/prev");
-        sender1.sendMessage(m, false);
-        sender2.sendMessage(m, false);
-        sender3.sendMessage(m, false);
-        sender4.sendMessage(m, false);
-    }
+//    //play next video
+//    if( key == 'n' || key == 'N'){
+//        ofxOscMessage m;
+//        m.setAddress("/next");
+//        sender1.sendMessage(m, false);
+//        sender2.sendMessage(m, false);
+//        sender3.sendMessage(m, false);
+//        sender4.sendMessage(m, false);
+//    }
+//    //play previous video
+//    if( key == 'b' || key == 'B'){
+//        ofxOscMessage m;
+//        m.setAddress("/prev");
+//        sender1.sendMessage(m, false);
+//        sender2.sendMessage(m, false);
+//        sender3.sendMessage(m, false);
+//        sender4.sendMessage(m, false);
+//    }
     //toggle info screen
     if( key == 'i' || key == 'I'){
         ofxOscMessage m;

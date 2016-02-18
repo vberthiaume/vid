@@ -23,11 +23,13 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+
     
     ofTrueTypeFont font;
     ofxOscSender sender1, sender2, sender3, sender4;
     ofBuffer imgAsBuffer;
     ofImage img;
+    ofSoundPlayer soundPlayer;
     
     string pi1_ip, pi2_ip, pi3_ip, pi4_ip;
     string folder_path;
