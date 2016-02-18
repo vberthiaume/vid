@@ -50,10 +50,10 @@ void ofApp::draw(){
     y += 15;
     ofDrawBitmapString("press S to stop playing", 10, y);
     y += 15;
-    ofDrawBitmapString("press N to start next video", 10, y);
-    y += 15;
-    ofDrawBitmapString("press B to go back to previous video", 10, y);
-    y += 15;
+//    ofDrawBitmapString("press N to start next video", 10, y);
+//    y += 15;
+//    ofDrawBitmapString("press B to go back to previous video", 10, y);
+//    y += 15;
     ofDrawBitmapString("press I to toggle info screen", 10, y);
     y += 15;
 }
@@ -106,22 +106,22 @@ void ofApp::keyPressed(int key){
         sendMessageToAll(m);
         soundPlayer.stop();
     }
-    //play next video
-    if( key == 'n' || key == 'N'){
-        ofxOscMessage m;
-        m.setAddress("/next");
-        sendMessageToAll(m);
-        m.setAddress("/loop");
-        sendMessageToAll(m);
-    }
-    //play previous video
-    if( key == 'b' || key == 'B'){
-        ofxOscMessage m;
-        m.setAddress("/prev");
-        sendMessageToAll(m);
-        m.setAddress("/loop");
-        sendMessageToAll(m);
-    }
+//    //play next video
+//    if( key == 'n' || key == 'N'){
+//        ofxOscMessage m;
+//        m.setAddress("/next");
+//        sendMessageToAll(m);
+//        m.setAddress("/loop");
+//        sendMessageToAll(m);
+//    }
+//    //play previous video
+//    if( key == 'b' || key == 'B'){
+//        ofxOscMessage m;
+//        m.setAddress("/prev");
+//        sendMessageToAll(m);
+//        m.setAddress("/loop");
+//        sendMessageToAll(m);
+//    }
     //toggle info screen
     if( key == 'i' || key == 'I'){
         ofxOscMessage m;
