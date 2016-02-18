@@ -50,14 +50,20 @@ void ofApp::draw(){
     y += 15;
     ofDrawBitmapString("press S to stop playing", 10, y);
     y += 15;
-//    ofDrawBitmapString("press N to start next video", 10, y);
-//    y += 15;
-//    ofDrawBitmapString("press B to go back to previous video", 10, y);
-//    y += 15;
+    ofDrawBitmapString("press N to start next video", 10, y);
+    y += 15;
+    ofDrawBitmapString("press B to go back to previous video", 10, y);
+    y += 15;
     ofDrawBitmapString("press I to toggle info screen", 10, y);
     y += 15;
 }
 
+void ofApp::sendMessageToAll(ofxOscMessage m){
+    sender1.sendMessage(m, false);
+    sender2.sendMessage(m, false);
+    sender3.sendMessage(m, false);
+    sender4.sendMessage(m, false);
+}
 
 
 //--------------------------------------------------------------
@@ -81,18 +87,15 @@ void ofApp::keyPressed(int key){
         ofxOscMessage m;
         m.setAddress("/play");
         m.addStringArg(folder_path);
-        sender1.sendMessage(m, false);
-        sender2.sendMessage(m, false);
-        sender3.sendMessage(m, false);
-        sender4.sendMessage(m, false);
-        
+        sendMessageToAll(m);
         if(key == 'p' || key == 'P'){
             ofxOscMessage m;
             m.setAddress("/unloop");
-            sender1.sendMessage(m, false);
-            sender2.sendMessage(m, false);
-            sender3.sendMessage(m, false);
-            sender4.sendMessage(m, false);
+            sendMessageToAll(m);
+        } else {
+            ofxOscMessage m;
+            m.setAddress("/loop");
+            sendMessageToAll(m);
         }
         soundPlayer.play();
     }
@@ -100,38 +103,30 @@ void ofApp::keyPressed(int key){
     if( key == 's' || key == 'S'){
         ofxOscMessage m;
         m.setAddress("/stop");
-        sender1.sendMessage(m, false);
-        sender2.sendMessage(m, false);
-        sender3.sendMessage(m, false);
-        sender4.sendMessage(m, false);
+        sendMessageToAll(m);
         soundPlayer.stop();
     }
-//    //play next video
-//    if( key == 'n' || key == 'N'){
-//        ofxOscMessage m;
-//        m.setAddress("/next");
-//        sender1.sendMessage(m, false);
-//        sender2.sendMessage(m, false);
-//        sender3.sendMessage(m, false);
-//        sender4.sendMessage(m, false);
-//    }
-//    //play previous video
-//    if( key == 'b' || key == 'B'){
-//        ofxOscMessage m;
-//        m.setAddress("/prev");
-//        sender1.sendMessage(m, false);
-//        sender2.sendMessage(m, false);
-//        sender3.sendMessage(m, false);
-//        sender4.sendMessage(m, false);
-//    }
+    //play next video
+    if( key == 'n' || key == 'N'){
+        ofxOscMessage m;
+        m.setAddress("/next");
+        sendMessageToAll(m);
+        m.setAddress("/loop");
+        sendMessageToAll(m);
+    }
+    //play previous video
+    if( key == 'b' || key == 'B'){
+        ofxOscMessage m;
+        m.setAddress("/prev");
+        sendMessageToAll(m);
+        m.setAddress("/loop");
+        sendMessageToAll(m);
+    }
     //toggle info screen
     if( key == 'i' || key == 'I'){
         ofxOscMessage m;
         m.setAddress("/info");
-        sender1.sendMessage(m, false);
-        sender2.sendMessage(m, false);
-        sender3.sendMessage(m, false);
-        sender4.sendMessage(m, false);
+        sendMessageToAll(m);
     }
 }
 

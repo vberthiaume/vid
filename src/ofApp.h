@@ -23,7 +23,8 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
-
+    
+    void sendMessageToAll(ofxOscMessage m);
     
     ofTrueTypeFont font;
     ofxOscSender sender1, sender2, sender3, sender4;
