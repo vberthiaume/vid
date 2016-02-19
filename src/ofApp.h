@@ -25,6 +25,7 @@ public:
     void gotMessage(ofMessage msg);
     
     void sendMessageToAll(ofxOscMessage m);
+    void playAllVideos();
     
     ofTrueTypeFont font;
     ofxOscSender sender1, sender2, sender3, sender4;

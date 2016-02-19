@@ -99,15 +99,40 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
     sender4.sendMessage(m, false);
 }
 
+void ofApp::playAllVideos(){
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path1);
+        sender1.sendMessage(m, false);
+    }
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path2);
+        sender2.sendMessage(m, false);
+    }
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path3);
+        sender3.sendMessage(m, false);
+    }
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path4);
+        sender4.sendMessage(m, false);
+    }
+
+}
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     //play videos one shot(p) or in a loop(l)
     if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path1);
-        sendMessageToAll(m);
+        playAllVideos();
         if(key == 'p' || key == 'P'){
             ofxOscMessage m;
             m.setAddress("/unloop");
