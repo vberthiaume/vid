@@ -27,6 +27,7 @@ public:
     
     void sendMessageToAll(ofxOscMessage m);
     void playAllVideos();
+    void setVolumeToMax();
     
     ofTrueTypeFont font;
     ofxOscSender sender1, sender2, sender3, sender4;
@@ -43,5 +44,7 @@ public:
     string pi1_ip, pi2_ip, pi3_ip, pi4_ip;
     string folder_path1, folder_path2, folder_path3, folder_path4;
     int iPiPort;
+    
+    vector<string> playList;
 };
 

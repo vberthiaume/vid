@@ -22,6 +22,26 @@
 //    /quit           : Exit the player
 //--------------------------------------------------------------
 
+
+//taken from http://stackoverflow.com/questions/236129/split-a-string-in-c
+#include <sstream>
+#include <vector>
+
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
 void ofApp::setup(){
 
 	ofBackground(25, 25, 25);
@@ -47,14 +67,9 @@ void ofApp::setup(){
     soundPlayer.load("/Users/nicolai/Downloads/PERTURBATOR.mp3");
     
     //send random osc message to get HPlayer ready to receive other messages
-    ofxOscMessage m;
-    m.setAddress("/stop");
-    sendMessageToAll(m);
-    
-    //make sure sound is set to 100%
-    m.setAddress("/volume");
-    m.addIntArg(100);
-    sendMessageToAll(m);
+//    ofxOscMessage m;
+//    m.setAddress("/stop");
+//    sendMessageToAll(m);
     
     filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
     filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
@@ -69,24 +84,84 @@ void ofApp::setup(){
     loopButton->onButtonEvent(this, &ofApp::onButtonEvent);
 }
 
+void ofApp::setVolumeToMax(){
+    //make sure sound is set to 100%
+    ofxOscMessage m;
+    m.setAddress("/volume");
+    m.addIntArg(100);
+    sendMessageToAll(m);
+}
+
 void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e)
 {
-    // text input events carry the text of the input field //
-    cout << "From Event Object: " << e.text << endl;
-    // although you can also retrieve it from the event target //
-    cout << "From Event Target: " << e.target->getText() << endl;
+    playList = split(e.text, ',');
 }
 
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e)
 {
-    // we have a couple ways to figure out which button was clicked //
-    
-    // we can compare our button pointer to the target of the event //
-    if (e.target == playButton){
-        cout << "play\n";
-        // or we can check against the label of the event target //
-    } else if(e.target == loopButton){
-        cout << "loop\n";    }
+    if (e.target == playButton || e.target == loopButton){
+        setVolumeToMax();
+        
+        if (playList.size() != 0){
+            ofxOscMessage m1, m2, m3, m4;
+            if (e.target == playButton){
+                cout << "play\n";
+//                ofxOscMessage m;
+//                m.setAddress("/unloop");
+//                sendMessageToAll(m);
+                m1.setAddress("/play");
+                m2.setAddress("/play");
+                m3.setAddress("/play");
+                m4.setAddress("/play");
+            } else if (e.target == loopButton){
+                cout << "loop\n";
+//                ofxOscMessage m;
+//                m.setAddress("/loop");
+//                sendMessageToAll(m);
+                m1.setAddress("/loop");
+                m2.setAddress("/loop");
+                m3.setAddress("/loop");
+                m4.setAddress("/loop");
+            }
+            for(auto& video : playList){
+                if (video == "1"){
+                    m1.addStringArg(folder_path1+"video1");
+                    m2.addStringArg(folder_path2+"video1");
+                    m3.addStringArg(folder_path3+"video1");
+                    m4.addStringArg(folder_path4+"video1");
+                } else if (video == "2"){
+                    m1.addStringArg(folder_path1+"video2");
+                    m2.addStringArg(folder_path2+"video2");
+                    m3.addStringArg(folder_path3+"video2");
+                    m4.addStringArg(folder_path4+"video2");
+                } else if (video == "3"){
+                    m1.addStringArg(folder_path1+"video3");
+                    m2.addStringArg(folder_path2+"video3");
+                    m3.addStringArg(folder_path3+"video3");
+                    m4.addStringArg(folder_path4+"video3");
+                } else if (video == "4"){
+                    m1.addStringArg(folder_path1+"video4");
+                    m2.addStringArg(folder_path2+"video4");
+                    m3.addStringArg(folder_path3+"video4");
+                    m4.addStringArg(folder_path4+"video4");
+                } else if (video == "5"){
+                    m1.addStringArg(folder_path1+"video5");
+                    m2.addStringArg(folder_path2+"video5");
+                    m3.addStringArg(folder_path3+"video5");
+                    m4.addStringArg(folder_path4+"video5");
+                } else if (video == "6"){
+                    m1.addStringArg(folder_path1+"video6");
+                    m2.addStringArg(folder_path2+"video6");
+                    m3.addStringArg(folder_path3+"video6");
+                    m4.addStringArg(folder_path4+"video6");
+                }
+            }
+            sender1.sendMessage(m1, false);
+            sender2.sendMessage(m2, false);
+            sender3.sendMessage(m3, false);
+            sender4.sendMessage(m4, false);
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -166,7 +241,6 @@ void ofApp::playAllVideos(){
         m.addStringArg(folder_path4);
         sender4.sendMessage(m, false);
     }
-
 }
 
 
