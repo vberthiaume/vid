@@ -24,7 +24,7 @@
 
 void ofApp::setup(){
 
-	ofBackground(40, 100, 40);
+	ofBackground(25, 25, 25);
     
     pi1_ip = "192.168.0.101";
     pi2_ip = "192.168.0.102";
