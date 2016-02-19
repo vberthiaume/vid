@@ -33,7 +33,7 @@ public:
     ofSoundPlayer soundPlayer;
     
     string pi1_ip, pi2_ip, pi3_ip, pi4_ip;
-    string folder_path;
+    string folder_path1, folder_path2, folder_path3, folder_path4;
     int iPiPort;
 };
 
