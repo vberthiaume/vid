@@ -71,24 +71,24 @@ void ofApp::draw(){
     }
     
 	// display instructions
-	string buf;
-	buf = "sending osc messages to " + pi1_ip + ":" + ofToString(iPiPort);
     int y = 20;
+	string buf;
+	buf = "WELCOME TO BARBARA'S INSTALLATION";//"sending osc messages to " + pi1_ip + ":" + ofToString(iPiPort);
 	ofDrawBitmapString(buf, 10, y);
     y += 30;
-//	  ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 50);
-//    y += 15;
-    ofDrawBitmapString("press P to play all videos one shot", 10, y);
+    ofDrawBitmapString("press 'p' to play all videos one shot", 10, y);
     y += 15;
-    ofDrawBitmapString("press L to loop all videos", 10, y);
+    ofDrawBitmapString("press 'l' to loop all videos", 10, y);
     y += 15;
-    ofDrawBitmapString("press S to stop playing", 10, y);
+    ofDrawBitmapString("press 's' to stop playing", 10, y);
     y += 15;
-    ofDrawBitmapString("press N to start next video", 10, y);
+    ofDrawBitmapString("press 'n' to play next video", 10, y);
     y += 15;
-    ofDrawBitmapString("press B to go back to previous video", 10, y);
+    ofDrawBitmapString("press 'b' to go back to previous video", 10, y);
     y += 15;
-    ofDrawBitmapString("press I to toggle info screen", 10, y);
+    ofDrawBitmapString("press 'i' to toggle info screen", 10, y);
+    y += 15;
+    ofDrawBitmapString("press 'Q' to quit HPlayer", 10, y);
     y += 15;
 }
 
@@ -146,6 +146,12 @@ void ofApp::keyPressed(int key){
     if( key == 'i' || key == 'I'){
         ofxOscMessage m;
         m.setAddress("/info");
+        sendMessageToAll(m);
+    }
+    //quit HPlayer
+    if( key == 'Q'){
+        ofxOscMessage m;
+        m.setAddress("/quit");
         sendMessageToAll(m);
     }
 }
