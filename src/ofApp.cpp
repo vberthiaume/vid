@@ -55,11 +55,45 @@ void ofApp::setup(){
     m.setAddress("/volume");
     m.addIntArg(100);
     sendMessageToAll(m);
+    
+    filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
+    filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
+    filesToPlayTextInput->setWidth(300, .4);
+    
+    playButton = new ofxDatGuiButton("PLAY ONCE");
+    playButton->setWidth(75);
+    loopButton = new ofxDatGuiButton("LOOP");
+    loopButton->setWidth(50);
+    
+    playButton->onButtonEvent(this, &ofApp::onButtonEvent);
+    loopButton->onButtonEvent(this, &ofApp::onButtonEvent);
+}
+
+void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e)
+{
+    // text input events carry the text of the input field //
+    cout << "From Event Object: " << e.text << endl;
+    // although you can also retrieve it from the event target //
+    cout << "From Event Target: " << e.target->getText() << endl;
+}
+
+void ofApp::onButtonEvent(ofxDatGuiButtonEvent e)
+{
+    // we have a couple ways to figure out which button was clicked //
+    
+    // we can compare our button pointer to the target of the event //
+    if (e.target == playButton){
+        cout << "play\n";
+        // or we can check against the label of the event target //
+    } else if(e.target == loopButton){
+        cout << "loop\n";    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    filesToPlayTextInput->update();
+    playButton->update();
+    loopButton->update();
 }
 
 //--------------------------------------------------------------
@@ -71,25 +105,33 @@ void ofApp::draw(){
     }
     
 	// display instructions
+    int x = 10;
     int y = 20;
 	string buf;
 	buf = "WELCOME TO BARBARA'S INSTALLATION";//"sending osc messages to " + pi1_ip + ":" + ofToString(iPiPort);
-	ofDrawBitmapString(buf, 10, y);
+	ofDrawBitmapString(buf, x, y);
     y += 30;
-    ofDrawBitmapString("press 'p' to play all videos one shot", 10, y);
+    ofDrawBitmapString("press 'p' to play all videos one shot", x, y);
     y += 15;
-    ofDrawBitmapString("press 'l' to loop all videos", 10, y);
+    ofDrawBitmapString("press 'l' to loop all videos", x, y);
     y += 15;
-    ofDrawBitmapString("press 's' to stop playing", 10, y);
+    ofDrawBitmapString("press 's' to stop playing", x, y);
     y += 15;
-    ofDrawBitmapString("press 'n' to play next video", 10, y);
+    ofDrawBitmapString("press 'n' to play next video", x, y);
     y += 15;
-    ofDrawBitmapString("press 'b' to go back to previous video", 10, y);
+    ofDrawBitmapString("press 'b' to go back to previous video", x, y);
     y += 15;
-    ofDrawBitmapString("press 'i' to toggle info screen", 10, y);
+    ofDrawBitmapString("press 'i' to toggle info screen", x, y);
     y += 15;
-    ofDrawBitmapString("press 'Q' to quit HPlayer", 10, y);
+    ofDrawBitmapString("press 'Q' to quit HPlayer", x, y);
     y += 15;
+    filesToPlayTextInput->setPosition(x, y);
+    filesToPlayTextInput->draw();
+    
+    playButton->setPosition(x+300+5, y);
+    loopButton->setPosition(x+300+5+75+5, y);
+    playButton->draw();
+    loopButton->draw();
 }
 
 void ofApp::sendMessageToAll(ofxOscMessage m){

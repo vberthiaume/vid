@@ -34,6 +34,12 @@ public:
     ofImage img;
     ofSoundPlayer soundPlayer;
     
+    ofxDatGuiTextInput* filesToPlayTextInput;
+    void onTextInputEvent(ofxDatGuiTextInputEvent e);
+    void onButtonEvent(ofxDatGuiButtonEvent e);
+    
+    ofxDatGuiButton* playButton, *loopButton;
+    
     string pi1_ip, pi2_ip, pi3_ip, pi4_ip;
     string folder_path1, folder_path2, folder_path3, folder_path4;
     int iPiPort;
