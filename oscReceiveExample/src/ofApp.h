@@ -24,6 +24,7 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+    void printMsgs(ofxOscMessage &m);
     
     ofTrueTypeFont font;
     ofxOscReceiver receiver;
@@ -38,4 +39,6 @@ public:
     ofImage receivedImage;
     
     ofSoundPlayer soundPlayers[6];
+    
+    bool m_bIsPlaying;
 };

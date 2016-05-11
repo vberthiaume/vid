@@ -10,12 +10,14 @@ void ofApp::setup(){
 
 	ofBackground(30, 30, 130);
     
-    soundPlayers[0].load("/Users/nicolai/Downloads/audio1.mp3");
-    soundPlayers[1].load("/Users/nicolai/Downloads/audio2.mp3");
-    soundPlayers[2].load("/Users/nicolai/Downloads/audio3.mp3");
-    soundPlayers[3].load("/Users/nicolai/Downloads/audio4.mp3");
-    soundPlayers[4].load("/Users/nicolai/Downloads/audio5.mp3");
-    soundPlayers[5].load("/Users/nicolai/Downloads/audio6.mp3");
+    soundPlayers[0].load("/Users/nicolai/Downloads/audio1.wav");
+    soundPlayers[1].load("/Users/nicolai/Downloads/audio2.wav");
+    soundPlayers[2].load("/Users/nicolai/Downloads/audio3.wav");
+    soundPlayers[3].load("/Users/nicolai/Downloads/audio4.wav");
+    soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
+    soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
+    
+    m_bIsPlaying = false;
 
 }
 
@@ -37,41 +39,53 @@ void ofApp::update(){
         
         // check for mouse moved message
         if(m.getAddress() == "/play"){
-            soundPlayers[4].play();
-//            soundPlayer.stop();
+            m_bIsPlaying = true;
+            soundPlayers[0].play();
         }
         
-        // unrecognized message: display on the bottom of the screen
-        string msg_string;
-        msg_string = m.getAddress();
-        msg_string += ": ";
-        for(int i = 0; i < m.getNumArgs(); i++){
-            // get the argument type
-            msg_string += m.getArgTypeName(i);
-            msg_string += ":";
-            // display the argument - make sure we get the right type
-            if(m.getArgType(i) == OFXOSC_TYPE_INT32){
-                msg_string += ofToString(m.getArgAsInt32(i));
-            }
-            else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
-                msg_string += ofToString(m.getArgAsFloat(i));
-            }
-            else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
-                msg_string += m.getArgAsString(i);
-            }
-            else{
-                msg_string += "unknown";
-            }
-        }
-        // add to the list of strings to display
-        msg_strings[current_msg_string] = msg_string;
-        timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
-        current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
-        // clear the next line
-        msg_strings[current_msg_string] = "";
         
-        
+//        soundPlayers[0].play();
+//        while(soundPlayers[0].isPlaying()){
+//            sleep(20);
+//        }
+//        soundPlayers[1].play();
+//        while(soundPlayers[1].isPlaying()){
+//            sleep(20);
+//        }
+        //            soundPlayer.stop();
+        printMsgs(m);
     }
+}
+
+void ofApp::printMsgs(ofxOscMessage &m){
+    // unrecognized message: display on the bottom of the screen
+    string msg_string;
+    msg_string = m.getAddress();
+    msg_string += ": ";
+    for(int i = 0; i < m.getNumArgs(); i++){
+        // get the argument type
+        msg_string += m.getArgTypeName(i);
+        msg_string += ":";
+        // display the argument - make sure we get the right type
+        if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+            msg_string += ofToString(m.getArgAsInt32(i));
+        }
+        else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+            msg_string += ofToString(m.getArgAsFloat(i));
+        }
+        else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+            msg_string += m.getArgAsString(i);
+        }
+        else{
+            msg_string += "unknown";
+        }
+    }
+    // add to the list of strings to display
+    msg_strings[current_msg_string] = msg_string;
+    timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
+    current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
+    // clear the next line
+    msg_strings[current_msg_string] = "";
 }
 
 
