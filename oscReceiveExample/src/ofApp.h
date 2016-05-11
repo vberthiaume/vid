@@ -37,5 +37,5 @@ public:
     
     ofImage receivedImage;
     
-    ofSoundPlayer soundPlayer;
+    ofSoundPlayer soundPlayers[6];
 };

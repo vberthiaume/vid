@@ -33,8 +33,8 @@ void ofApp::update(){
         
         // check for mouse moved message
         if(m.getAddress() == "/play"){
-            soundPlayer.load("/Users/nicolai/Downloads/blackQueen.mp3");
-            soundPlayer.play();
+            soundPlayers[0].load("/Users/nicolai/Downloads/blackQueen.mp3");
+            soundPlayers[0].play();
 //            soundPlayer.stop();
         }
         
