@@ -41,4 +41,5 @@ public:
     ofSoundPlayer soundPlayers[6];
     
     bool m_bIsPlaying;
+    bool m_bPlayerDone[6]{false};
 };

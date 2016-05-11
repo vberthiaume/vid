@@ -42,18 +42,28 @@ void ofApp::update(){
             m_bIsPlaying = true;
             soundPlayers[0].play();
         }
-        
-        
-//        soundPlayers[0].play();
-//        while(soundPlayers[0].isPlaying()){
-//            sleep(20);
-//        }
-//        soundPlayers[1].play();
-//        while(soundPlayers[1].isPlaying()){
-//            sleep(20);
-//        }
         //            soundPlayer.stop();
         printMsgs(m);
+    }
+    
+    if (m_bIsPlaying){
+        if (!m_bPlayerDone[0] && !soundPlayers[0].isPlaying()){
+            m_bPlayerDone[0] = true;
+            soundPlayers[1].play();
+        }
+        
+        else if (!m_bPlayerDone[1] && !soundPlayers[1].isPlaying()){
+            m_bPlayerDone[1] = true;
+            soundPlayers[2].play();
+        }
+
+        else if (m_bPlayerDone[1] && !soundPlayers[2].isPlaying()){
+            m_bIsPlaying = false;
+            for (int i = 0; i<6; ++i){
+                m_bPlayerDone[i]= false;
+            }
+        }
+
     }
 }
 
