@@ -7,11 +7,15 @@ void ofApp::setup(){
 	receiver.setup(PORT);
 
 	current_msg_string = 0;
-	mouseX = 0;
-	mouseY = 0;
-	mouseButtonState = "";
 
 	ofBackground(30, 30, 130);
+    
+    soundPlayers[0].load("/Users/nicolai/Downloads/audio1.mp3");
+    soundPlayers[1].load("/Users/nicolai/Downloads/audio2.mp3");
+    soundPlayers[2].load("/Users/nicolai/Downloads/audio3.mp3");
+    soundPlayers[3].load("/Users/nicolai/Downloads/audio4.mp3");
+    soundPlayers[4].load("/Users/nicolai/Downloads/audio5.mp3");
+    soundPlayers[5].load("/Users/nicolai/Downloads/audio6.mp3");
 
 }
 
@@ -33,8 +37,7 @@ void ofApp::update(){
         
         // check for mouse moved message
         if(m.getAddress() == "/play"){
-            soundPlayers[0].load("/Users/nicolai/Downloads/blackQueen.mp3");
-            soundPlayers[0].play();
+            soundPlayers[4].play();
 //            soundPlayer.stop();
         }
         
