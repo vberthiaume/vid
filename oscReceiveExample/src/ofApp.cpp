@@ -27,6 +27,7 @@ void ofApp::setup(){
 #endif
     
     m_bIsPlaying = false;
+    m_bIsLooping = false;
 
 }
 
@@ -47,16 +48,31 @@ void ofApp::update(){
         receiver.getNextMessage(m);
         
         // check for mouse moved message
-        if(m.getAddress() == "/play"){
-            m_bIsPlaying = true;
+        if(m.getAddress() == "/play" || m.getAddress() == "/loop"){
+            if (m.getAddress() == "/loop"){
+                m_bIsLooping = true;
+            } else {
+                m_bIsPlaying = true;
+                m_bIsLooping = false;
+            }
             //TODO: use objects for sound players that set the flags intelligently
             soundPlayers[0].play();
             m_bPlayerStarted[0] = true;
         }
+        
+        if(m.getAddress() == "/stop"){
+            m_bIsPlaying = false;
+            m_bIsLooping = false;
+            for (int i = 0; i<6; ++i){
+                soundPlayers[i].stop();
+                m_bPlayerDone[i] = false;
+                m_bPlayerStarted[i] = false;
+            }
+        }
         printMsgs(m);
     }
     
-    if (m_bIsPlaying){
+    if (m_bIsPlaying || m_bIsLooping){
         
         //return if currently playing a sound
         if (soundPlayers[0].isPlaying() || soundPlayers[1].isPlaying() ||
@@ -91,6 +107,10 @@ void ofApp::update(){
             m_bIsPlaying = false;
             for (int i = 0; i<6; ++i){
                 m_bPlayerDone[i]= false;
+            }
+            if (m_bIsLooping) {
+                soundPlayers[0].play();
+                m_bPlayerStarted[0] = true;
             }
         } else if (m_bPlayerDone[4]){
             soundPlayers[5].play();
