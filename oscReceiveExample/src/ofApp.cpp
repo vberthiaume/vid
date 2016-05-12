@@ -61,7 +61,7 @@ void ofApp::update(){
         //return if currently playing a sound
         if (soundPlayers[0].isPlaying() || soundPlayers[1].isPlaying() ||
             soundPlayers[2].isPlaying() || soundPlayers[3].isPlaying() ||
-            soundPlayers[3].isPlaying() || soundPlayers[5].isPlaying() ){
+            soundPlayers[4].isPlaying() || soundPlayers[5].isPlaying() ){
             return;
         }
         
