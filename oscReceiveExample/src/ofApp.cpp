@@ -10,13 +10,14 @@ void ofApp::setup(){
 
 	ofBackground(30, 30, 130);
     
-   // soundPlayers[0].load("/Users/nicolai/Downloads/audio1.wav");
-   // soundPlayers[1].load("/Users/nicolai/Downloads/audio2.wav");
-   // soundPlayers[2].load("/Users/nicolai/Downloads/audio3.wav");
-   // soundPlayers[3].load("/Users/nicolai/Downloads/audio4.wav");
-   // soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
-   // soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
-
+#ifdef __APPLE__
+    soundPlayers[0].load("/Users/nicolai/Downloads/audio1.wav");
+    soundPlayers[1].load("/Users/nicolai/Downloads/audio2.wav");
+    soundPlayers[2].load("/Users/nicolai/Downloads/audio3.wav");
+    soundPlayers[3].load("/Users/nicolai/Downloads/audio4.wav");
+    soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
+    soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
+#else
     
     soundPlayers[0].load("/home/pi/Desktop/audio1.wav");
     soundPlayers[1].load("/home/pi/Desktop/audio2.wav");
@@ -24,6 +25,7 @@ void ofApp::setup(){
     soundPlayers[3].load("/home/pi/Desktop/audio4.wav");
     soundPlayers[4].load("/home/pi/Desktop/audio5.wav");
     soundPlayers[5].load("/home/pi/Desktop/audio6.wav");
+#endif
     
     m_bIsPlaying = false;
 
