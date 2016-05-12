@@ -87,21 +87,26 @@ void ofApp::update(){
         }
         
         //cycle through m_bPlayerDone, starting at the end, then start the next one, or set m_bIsPlaying = false;
-        if (!m_bPlayerDone[5]){
+        if (m_bPlayerDone[5]){
             m_bIsPlaying = false;
             for (int i = 0; i<6; ++i){
                 m_bPlayerDone[i]= false;
             }
-        } else if (!m_bPlayerDone[4]){
+        } else if (m_bPlayerDone[4]){
             soundPlayers[5].play();
-        } else if (!m_bPlayerDone[3]){
+            m_bPlayerStarted[5] = true;
+        } else if (m_bPlayerDone[3]){
             soundPlayers[4].play();
-        } else if (!m_bPlayerDone[2]){
+            m_bPlayerStarted[4] = true;
+        } else if (m_bPlayerDone[2]){
             soundPlayers[3].play();
-        } else if (!m_bPlayerDone[1]){
+            m_bPlayerStarted[3] = true;
+        } else if (m_bPlayerDone[1]){
             soundPlayers[2].play();
-        } else if (!m_bPlayerDone[0]){
+            m_bPlayerStarted[2] = true;
+        } else if (m_bPlayerDone[0]){
             soundPlayers[1].play();
+            m_bPlayerStarted[1] = true;
         }
     }
 }
