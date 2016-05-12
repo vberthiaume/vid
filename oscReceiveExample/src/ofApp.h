@@ -42,4 +42,5 @@ public:
     
     bool m_bIsPlaying;
     bool m_bPlayerDone[6]{false};
+    bool m_bPlayerStarted[6]{false};
 };

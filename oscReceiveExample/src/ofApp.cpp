@@ -18,7 +18,6 @@ void ofApp::setup(){
     soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
     soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
 #else
-    
     soundPlayers[0].load("/home/pi/Desktop/audio1.wav");
     soundPlayers[1].load("/home/pi/Desktop/audio2.wav");
     soundPlayers[2].load("/home/pi/Desktop/audio3.wav");
@@ -50,30 +49,60 @@ void ofApp::update(){
         // check for mouse moved message
         if(m.getAddress() == "/play"){
             m_bIsPlaying = true;
+            //TODO: use objects for sound players that set the flags intelligently
             soundPlayers[0].play();
+            m_bPlayerStarted[0] = true;
         }
-        //            soundPlayer.stop();
         printMsgs(m);
     }
     
     if (m_bIsPlaying){
-        if (!m_bPlayerDone[0] && !soundPlayers[0].isPlaying()){
-            m_bPlayerDone[0] = true;
-            soundPlayers[1].play();
+        
+        //return if currently playing a sound
+        if (soundPlayers[0].isPlaying() || soundPlayers[1].isPlaying() ||
+            soundPlayers[2].isPlaying() || soundPlayers[3].isPlaying() ||
+            soundPlayers[3].isPlaying() || soundPlayers[5].isPlaying() ){
+            return;
         }
         
-        else if (!m_bPlayerDone[1] && !soundPlayers[1].isPlaying()){
+        //figure out which sound just finished playing
+        if (m_bPlayerStarted[0]){
+            m_bPlayerDone[0] = true;
+            m_bPlayerStarted[0] = false;
+        } else if (m_bPlayerStarted[1]){
             m_bPlayerDone[1] = true;
-            soundPlayers[2].play();
+            m_bPlayerStarted[1] = false;
+        } else if (m_bPlayerStarted[2]){
+            m_bPlayerDone[2] = true;
+            m_bPlayerStarted[2] = false;
+        } else if (m_bPlayerStarted[3]){
+            m_bPlayerDone[3] = true;
+            m_bPlayerStarted[3] = false;
+        } else if (m_bPlayerStarted[4]){
+            m_bPlayerDone[4] = true;
+            m_bPlayerStarted[4] = false;
+        } else if (m_bPlayerStarted[5]){
+            m_bPlayerDone[5] = true;
+            m_bPlayerStarted[5] = false;
         }
-
-        else if (m_bPlayerDone[1] && !soundPlayers[2].isPlaying()){
+        
+        //cycle through m_bPlayerDone, starting at the end, then start the next one, or set m_bIsPlaying = false;
+        if (!m_bPlayerDone[5]){
             m_bIsPlaying = false;
             for (int i = 0; i<6; ++i){
                 m_bPlayerDone[i]= false;
             }
+        } else if (!m_bPlayerDone[4]){
+            soundPlayers[5].play();
+        } else if (!m_bPlayerDone[3]){
+            soundPlayers[4].play();
+        } else if (!m_bPlayerDone[2]){
+            soundPlayers[3].play();
+        } else if (!m_bPlayerDone[1]){
+            soundPlayers[2].play();
+        } else if (!m_bPlayerDone[0]){
+            soundPlayers[1].play();
         }
-
     }
 }
 
