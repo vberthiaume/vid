@@ -7,8 +7,9 @@ void ofApp::setup(){
 	receiver.setup(PORT);
 
 	current_msg_string = 0;
-
+#if USE_GUI
 	ofBackground(30, 30, 130);
+#endif
     
 #ifdef __APPLE__
     soundPlayers[0].load("/Users/nicolai/Downloads/audio1.wav");
@@ -77,7 +78,9 @@ void ofApp::update(){
                 m_bPlayerStarted[i] = false;
             }
         }
+#if USE_GUI
         printMsgs(m);
+#endif
     }
     
     if (m_bIsPlaying || m_bIsLooping){
@@ -173,7 +176,7 @@ void ofApp::printMsgs(ofxOscMessage &m){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+#if USE_GUI
 	string buf;
 	buf = "listening for osc messages on port" + ofToString(PORT);
 	ofDrawBitmapString(buf, 10, 20);
@@ -181,6 +184,7 @@ void ofApp::draw(){
 	for(int i = 0; i < NUM_MSG_STRINGS; i++){
 		ofDrawBitmapString(msg_strings[i], 10, 40 + 15 * i);
 	}
+#endif
 }
 
 //--------------------------------------------------------------
