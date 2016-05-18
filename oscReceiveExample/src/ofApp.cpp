@@ -18,12 +18,20 @@ void ofApp::setup(){
     soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
     soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
 #else
-    soundPlayers[0].load("/home/pi/Desktop/audio1.wav");
-    soundPlayers[1].load("/home/pi/Desktop/audio2.wav");
-    soundPlayers[2].load("/home/pi/Desktop/audio3.wav");
-    soundPlayers[3].load("/home/pi/Desktop/audio4.wav");
-    soundPlayers[4].load("/home/pi/Desktop/audio5.wav");
-    soundPlayers[5].load("/home/pi/Desktop/audio6.wav");
+    //soundPlayers[0].load("/home/pi/Desktop/audio1.wav");
+    //soundPlayers[1].load("/home/pi/Desktop/audio2.wav");
+    //soundPlayers[2].load("/home/pi/Desktop/audio3.wav");
+    //soundPlayers[3].load("/home/pi/Desktop/audio4.wav");
+    //soundPlayers[4].load("/home/pi/Desktop/audio5.wav");
+    //soundPlayers[5].load("/home/pi/Desktop/audio6.wav");
+    
+    soundPlayers[0].load("/media/pi/usb2/audio1.wav");
+    soundPlayers[1].load("/media/pi/usb2/audio2.wav");
+    soundPlayers[2].load("/media/pi/usb2/audio3.wav");
+    soundPlayers[3].load("/media/pi/usb2/audio4.wav");
+    soundPlayers[4].load("/media/pi/usb2/audio5.wav");
+    soundPlayers[5].load("/media/pi/usb2/audio6.wav");
+
 #endif
     
     m_bIsPlaying = false;
