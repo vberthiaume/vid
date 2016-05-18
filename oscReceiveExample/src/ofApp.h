@@ -6,9 +6,9 @@
 #define PORT 9000
 #define NUM_MSG_STRINGS 20
 
-//#ifndef USE_GUI
-//#define USE_GUI 1
-//#endif
+#ifndef USE_GUI
+#define USE_GUI 1
+#endif
 
 class ofApp : public ofBaseApp {
 public:
