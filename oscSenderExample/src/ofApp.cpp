@@ -46,10 +46,11 @@ void ofApp::setup(){
 
 	ofBackground(25, 25, 25);
     
-    pi1_ip = "192.168.0.101";//"127.0.0.1";
+    pi1_ip = "192.168.0.101";
     pi2_ip = "192.168.0.102";//"192.168.1.107";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
+    local_ip ="127.0.0.1";
     
     iPiPort = 9000;
     
@@ -63,6 +64,7 @@ void ofApp::setup(){
     sender2.setup(pi2_ip, iPiPort);
     sender3.setup(pi3_ip, iPiPort);
     sender4.setup(pi4_ip, iPiPort);
+    senderLocal.setup(local_ip, iPiPort);
     
 //    soundPlayer.load("/Users/nicolai/Downloads/PERTURBATOR.mp3");
     
@@ -166,6 +168,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e)
             sender2.sendMessage(m2, false);
             sender3.sendMessage(m3, false);
             sender4.sendMessage(m4, false);
+            senderLocal.sendMessage(m1, false);
         }
     }
 }
@@ -189,7 +192,7 @@ void ofApp::draw(){
     int x = 10;
     int y = 20;
 	string buf;
-	buf = "WELCOME TO BARBARA'S INSTALLATION";//"sending osc messages to " + pi1_ip + ":" + ofToString(iPiPort);
+	buf = "WELCOME TO BARBARA'S INSTALLATION";
 	ofDrawBitmapString(buf, x, y);
     y += 30;
     ofDrawBitmapString("press 'p' to play all videos one shot", x, y);
@@ -220,6 +223,7 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
     sender4.sendMessage(m, false);
+    senderLocal.sendMessage(m, false);
 }
 
 void ofApp::playAllVideos(){
@@ -228,6 +232,7 @@ void ofApp::playAllVideos(){
         m.setAddress("/play");
         m.addStringArg(folder_path1);
         sender1.sendMessage(m, false);
+        senderLocal.sendMessage(m, false);
     }
     {
         ofxOscMessage m;
