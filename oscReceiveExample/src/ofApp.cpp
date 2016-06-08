@@ -78,9 +78,8 @@ void ofApp::update(){
                 m_bPlayerStarted[i] = false;
             }
         }
-#if USE_GUI
+
         printMsgs(m);
-#endif
     }
     
     if (m_bIsPlaying || m_bIsLooping){
@@ -165,12 +164,17 @@ void ofApp::printMsgs(ofxOscMessage &m){
             msg_string += "unknown";
         }
     }
+#if USE_GUI
     // add to the list of strings to display
     msg_strings[current_msg_string] = msg_string;
     timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
     current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
     // clear the next line
     msg_strings[current_msg_string] = "";
+#else
+    std:: cout << msg_string << "\n";
+#endif
+    
 }
 
 
