@@ -26,12 +26,12 @@ void ofApp::setup(){
     //soundPlayers[4].load("/home/pi/Desktop/audio5.wav");
     //soundPlayers[5].load("/home/pi/Desktop/audio6.wav");
     
-    soundPlayers[0].load("/media/pi/usb2/audio1.wav");
-    soundPlayers[1].load("/media/pi/usb2/audio2.wav");
-    soundPlayers[2].load("/media/pi/usb2/audio3.wav");
-    soundPlayers[3].load("/media/pi/usb2/audio4.wav");
-    soundPlayers[4].load("/media/pi/usb2/audio5.wav");
-    soundPlayers[5].load("/media/pi/usb2/audio6.wav");
+    soundPlayers[0].load("/media/pi/usb1/audio1.wav");
+    soundPlayers[1].load("/media/pi/usb1/audio2.wav");
+    soundPlayers[2].load("/media/pi/usb1/audio3.wav");
+    soundPlayers[3].load("/media/pi/usb1/audio4.wav");
+    soundPlayers[4].load("/media/pi/usb1/audio5.wav");
+    soundPlayers[5].load("/media/pi/usb1/audio6.wav");
 
 #endif
     
