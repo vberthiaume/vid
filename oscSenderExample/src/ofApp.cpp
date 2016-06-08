@@ -47,12 +47,13 @@ void ofApp::setup(){
 	ofBackground(25, 25, 25);
     
     pi1_ip = "192.168.0.101";
-    pi2_ip = "192.168.0.102";//"192.168.1.107";
+    pi2_ip = "192.168.1.108";//"192.168.0.102";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
     local_ip ="127.0.0.1";
     
-    iPiPort = 9000;
+    iPiVideoPort = 9000;
+    iPiAudioPort = 9500;
     
     folder_path1 = "/media/pi/usb1/";
     folder_path2 = "/media/pi/usb2/";
@@ -60,11 +61,12 @@ void ofApp::setup(){
     folder_path4 = "/media/pi/usb4/";
     
 	// open outgoing connections
-	sender1.setup(pi1_ip, iPiPort);
-    sender2.setup(pi2_ip, iPiPort);
-    sender3.setup(pi3_ip, iPiPort);
-    sender4.setup(pi4_ip, iPiPort);
-    senderLocal.setup(local_ip, iPiPort);
+	sender1video.setup(pi1_ip, iPiVideoPort);
+    sender1audio.setup(pi1_ip, iPiAudioPort);
+    sender2.setup(pi2_ip, iPiVideoPort);
+    sender3.setup(pi3_ip, iPiVideoPort);
+    sender4.setup(pi4_ip, iPiVideoPort);
+    senderLocal.setup(local_ip, iPiAudioPort);
     
 //    soundPlayer.load("/Users/nicolai/Downloads/PERTURBATOR.mp3");
     
@@ -164,7 +166,8 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e)
                     m4.addStringArg(folder_path4+"video6.mp4");
                 }
             }
-            sender1.sendMessage(m1, false);
+            sender1video.sendMessage(m1, false);
+            sender1audio.sendMessage(m1, false);
             sender2.sendMessage(m2, false);
             sender3.sendMessage(m3, false);
             sender4.sendMessage(m4, false);
@@ -219,7 +222,8 @@ void ofApp::draw(){
 }
 
 void ofApp::sendMessageToAll(ofxOscMessage m){
-    sender1.sendMessage(m, false);
+    sender1video.sendMessage(m, false);
+    sender1audio.sendMessage(m, false);
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
     sender4.sendMessage(m, false);
@@ -231,7 +235,8 @@ void ofApp::playAllVideos(){
         ofxOscMessage m;
         m.setAddress("/play");
         m.addStringArg(folder_path1);
-        sender1.sendMessage(m, false);
+        sender1video.sendMessage(m, false);
+        sender1audio.sendMessage(m, false);
         senderLocal.sendMessage(m, false);
     }
     {

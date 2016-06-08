@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 
-#define PORT 9000
+#define PORT 9500
 #define NUM_MSG_STRINGS 20
 
 #ifndef USE_GUI
