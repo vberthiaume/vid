@@ -12,12 +12,20 @@ void ofApp::setup(){
 #endif
     
 #ifdef __APPLE__
-    soundPlayers[0].load("/Users/nicolai/Downloads/audio1.wav");
-    soundPlayers[1].load("/Users/nicolai/Downloads/audio2.wav");
-    soundPlayers[2].load("/Users/nicolai/Downloads/audio3.wav");
-    soundPlayers[3].load("/Users/nicolai/Downloads/audio4.wav");
-    soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
-    soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
+//    soundPlayers[0].load("/Users/nicolai/Downloads/audio1.wav");
+//    soundPlayers[1].load("/Users/nicolai/Downloads/audio2.wav");
+//    soundPlayers[2].load("/Users/nicolai/Downloads/audio3.wav");
+//    soundPlayers[3].load("/Users/nicolai/Downloads/audio4.wav");
+//    soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
+//    soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
+    
+    soundPlayers[0].load("/Volumes/usb1/audio/audio1.wav");
+    soundPlayers[1].load("/Volumes/usb1/audio/audio2.wav");
+    soundPlayers[2].load("/Volumes/usb1/audio/audio3.wav");
+    soundPlayers[3].load("/Volumes/usb1/audio/audio4.wav");
+    soundPlayers[4].load("/Volumes/usb1/audio/audio5.wav");
+    soundPlayers[5].load("/Volumes/usb1/audio/audio6.wav");
+    
 #else
     //soundPlayers[0].load("/home/pi/Desktop/audio1.wav");
     //soundPlayers[1].load("/home/pi/Desktop/audio2.wav");
@@ -26,12 +34,12 @@ void ofApp::setup(){
     //soundPlayers[4].load("/home/pi/Desktop/audio5.wav");
     //soundPlayers[5].load("/home/pi/Desktop/audio6.wav");
     
-    soundPlayers[0].load("/media/pi/usb1/audio1.wav");
-    soundPlayers[1].load("/media/pi/usb1/audio2.wav");
-    soundPlayers[2].load("/media/pi/usb1/audio3.wav");
-    soundPlayers[3].load("/media/pi/usb1/audio4.wav");
-    soundPlayers[4].load("/media/pi/usb1/audio5.wav");
-    soundPlayers[5].load("/media/pi/usb1/audio6.wav");
+    soundPlayers[0].load("/media/pi/usb1/audio/audio1.wav");
+    soundPlayers[1].load("/media/pi/usb1/audio/audio2.wav");
+    soundPlayers[2].load("/media/pi/usb1/audio/audio3.wav");
+    soundPlayers[3].load("/media/pi/usb1/audio/audio4.wav");
+    soundPlayers[4].load("/media/pi/usb1/audio/audio5.wav");
+    soundPlayers[5].load("/media/pi/usb1/audio/audio6.wav");
 
 #endif
     
