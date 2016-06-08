@@ -7,7 +7,7 @@
 #define NUM_MSG_STRINGS 20
 
 #ifndef USE_GUI
-#define USE_GUI 1
+#define USE_GUI 0
 #endif
 
 class ofApp : public ofBaseApp {
