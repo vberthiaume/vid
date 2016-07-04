@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "ofxDatGui.h"
+#include "ofAppRunner.h"
 
 
 

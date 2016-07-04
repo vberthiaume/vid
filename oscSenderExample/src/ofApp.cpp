@@ -45,6 +45,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
 void ofApp::setup(){
 
 	ofBackground(25, 25, 25);
+    ofSetFrameRate(20);
     
 //    pi1_ip = "192.168.0.101";
     pi1_ip = "192.168.1.110";
