@@ -4,6 +4,16 @@
 #include "ofxOsc.h"
 #include "ofxDatGui.h"
 
+
+
+#ifndef SEND_AUDIO_OSC
+#define SEND_AUDIO_OSC 1 
+#endif
+
+#ifndef MAC_PLAYS_AUDIO
+#define MAC_PLAYS_AUDIO 1
+#endif
+
 //--------------------------------------------------------
 class ofApp : public ofBaseApp {
     
@@ -14,16 +24,16 @@ public:
     void draw();
     
     void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+//    void keyReleased(int key);
+//    void mouseMoved(int x, int y);
+//    void mouseDragged(int x, int y, int button);
+//    void mousePressed(int x, int y, int button);
+//    void mouseReleased(int x, int y, int button);
+//    void mouseEntered(int x, int y);
+//    void mouseExited(int x, int y);
+//    void windowResized(int w, int h);
+//    void dragEvent(ofDragInfo dragInfo);
+//    void gotMessage(ofMessage msg);
     
     void sendMessageToAll(ofxOscMessage m);
     void playAllVideos();
