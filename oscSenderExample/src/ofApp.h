@@ -6,13 +6,16 @@
 #include "ofAppRunner.h"
 
 
+//#ifndef SEND_AUDIO_OSC
+//#define SEND_AUDIO_OSC 1 
+//#endif
 
-#ifndef SEND_AUDIO_OSC
-#define SEND_AUDIO_OSC 1 
-#endif
+//#ifndef OSCRECEIVER_PLAYS_AUDIO
+//#define OSCRECEIVER_PLAYS_AUDIO 1
+//#endif
 
-#ifndef MAC_PLAYS_AUDIO
-#define MAC_PLAYS_AUDIO 1
+#ifndef OSCSENDER_PLAYS_AUDIO
+#define OSCSENDER_PLAYS_AUDIO 1
 #endif
 
 //--------------------------------------------------------
@@ -39,6 +42,7 @@ public:
     void sendMessageToAll(ofxOscMessage m);
     void playAllVideos();
     void setVolumeToMax();
+    void playWithAudioThenStop(string i);
     
     ofTrueTypeFont font;
     ofxOscSender sender1video, sender1audio, sender2, sender3, sender4, senderLocal;

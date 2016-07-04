@@ -54,7 +54,7 @@ void ofApp::setup(){
     pi4_ip = "192.168.0.104";
     iPiVideoPort = 9000;
     
-#if MAC_PLAYS_AUDIO
+#if OSCRECEIVER_PLAYS_AUDIO
     local_ip ="127.0.0.1";
 #endif
 
@@ -76,16 +76,9 @@ void ofApp::setup(){
 #if SEND_AUDIO_OSC
     sender1audio.setup(pi1_ip, iPiAudioPort);
 #endif
-#if MAC_PLAYS_AUDIO
+#if OSCRECEIVER_PLAYS_AUDIO
     senderLocal.setup(local_ip, iPiAudioPort);
 #endif
-    
-//    soundPlayer.load("/Users/nicolai/Downloads/PERTURBATOR.mp3");
-    
-    //send random osc message to get HPlayer ready to receive other messages
-//    ofxOscMessage m;
-//    m.setAddress("/stop");
-//    sendMessageToAll(m);
     
     filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
     filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
@@ -112,11 +105,100 @@ void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
     playList = split(e.text, ',');
 }
 
+void ofApp::keyPressed(int key){
+    //play videos one shot(p) or in a loop(l)
+    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
+        playAllVideos();
+        if(key == 'p' || key == 'P'){
+            ofxOscMessage m;
+            m.setAddress("/unloop");
+            sendMessageToAll(m);
+        } else {
+            ofxOscMessage m;
+            m.setAddress("/loop");
+            sendMessageToAll(m);
+        }
+        //        soundPlayer.play();
+    }
+    //stop playing
+    if( key == 's' || key == 'S'){
+        ofxOscMessage m;
+        m.setAddress("/stop");
+        sendMessageToAll(m);
+        //        soundPlayer.stop();
+    }
+    //play next video
+    if( key == 'n' || key == 'N'){
+        ofxOscMessage m;
+        m.setAddress("/next");
+        sendMessageToAll(m);
+        m.setAddress("/loop");
+        sendMessageToAll(m);
+    }
+    //play previous video
+    if( key == 'b' || key == 'B'){
+        ofxOscMessage m;
+        m.setAddress("/prev");
+        sendMessageToAll(m);
+        m.setAddress("/loop");
+        sendMessageToAll(m);
+    }
+    //toggle info screen
+    if( key == 'i' || key == 'I'){
+        ofxOscMessage m;
+        m.setAddress("/info");
+        sendMessageToAll(m);
+    }
+    //quit HPlayer
+    if( key == 'Q'){
+        ofxOscMessage m;
+        m.setAddress("/quit");
+        sendMessageToAll(m);
+    }
+}
+
+
+void ofApp::playWithAudioThenStop(string strFileNumber){
+    ofxOscMessage m1, m2, m3, m4;
+    soundPlayer.load("/Users/nicolai/Downloads/RPI/nexus/sansAudio/audio/audio" + strFileNumber + ".wav");
+    soundPlayer.play();
+    
+    m1.setAddress("/play");
+    m2.setAddress("/play");
+    m3.setAddress("/play");
+    m4.setAddress("/play");
+    m1.addStringArg(folder_path1+"video" + strFileNumber + ".mp4");
+    m2.addStringArg(folder_path2+"video" + strFileNumber + ".mp4");
+    m3.addStringArg(folder_path3+"video" + strFileNumber + ".mp4");
+    m4.addStringArg(folder_path4+"video" + strFileNumber + ".mp4");
+    sender1video.sendMessage(m1, false);
+    sender2.sendMessage(m2, false);
+    sender3.sendMessage(m3, false);
+    sender4.sendMessage(m4, false);
+    while(soundPlayer.isPlaying()){
+        ofSleepMillis(50);
+    }
+    m1.clear();
+    m1.setAddress("/stop");
+    sender1video.sendMessage(m1, false);
+    sender2.sendMessage(m1, false);
+    sender3.sendMessage(m1, false);
+    sender4.sendMessage(m1, false);
+    
+}
+
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     if (e.target == playButton || e.target == loopButton){
         setVolumeToMax();
-        
         if (playList.size() != 0){
+            
+            
+            
+#if OSCSENDER_PLAYS_AUDIO
+            for(auto& video : playList){
+                playWithAudioThenStop(video);
+            }
+#else
             ofxOscMessage m1, m2, m3, m4;
             if (e.target == playButton){
                 cout << "play\n";
@@ -140,10 +222,10 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             for(auto& video : playList){
                 if (video == "1"){
                     cout << "1\n";
-                    m1.addStringArg(folder_path1+"video1.mov");
-                    m2.addStringArg(folder_path2+"video1.mov");
-                    m3.addStringArg(folder_path3+"video1.mov");
-                    m4.addStringArg(folder_path4+"video1.mov");
+                    m1.addStringArg(folder_path1+"video1.mp4");
+                    m2.addStringArg(folder_path2+"video1.mp4");
+                    m3.addStringArg(folder_path3+"video1.mp4");
+                    m4.addStringArg(folder_path4+"video1.mp4");
                 } else if (video == "2"){
                     cout << "2\n";
                     m1.addStringArg(folder_path1+"video2.mp4");
@@ -182,13 +264,80 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             sender4.sendMessage(m4, false);
 #if SEND_AUDIO_OSC
             sender1audio.sendMessage(m1, false);
-#endif
-#if MAC_PLAYS_AUDIO
+#endif  //SEND_AUDIO_OSC
+#if OSCRECEIVER_PLAYS_AUDIO
             senderLocal.sendMessage(m1, false);
-#endif
+#endif  //OSCRECEIVER_PLAYS_AUDIO
+#endif  //OSCSENDER_PLAYS_AUDIO
         }
     }
 }
+
+
+
+void ofApp::sendMessageToAll(ofxOscMessage m){
+    sender1video.sendMessage(m, false);
+    sender2.sendMessage(m, false);
+    sender3.sendMessage(m, false);
+    sender4.sendMessage(m, false);
+#if SEND_AUDIO_OSC
+    sender1audio.sendMessage(m, false);
+#endif
+#if OSCRECEIVER_PLAYS_AUDIO
+    senderLocal.sendMessage(m, false);
+#endif
+}
+
+
+
+
+
+
+
+void ofApp::playAllVideos(){
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path1);
+        sender1video.sendMessage(m, false);
+#if SEND_AUDIO_OSC
+        sender1audio.sendMessage(m, false);
+#endif
+#if OSCRECEIVER_PLAYS_AUDIO
+        senderLocal.sendMessage(m, false);
+#endif
+    }
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path2);
+        sender2.sendMessage(m, false);
+    }
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path3);
+        sender3.sendMessage(m, false);
+    }
+    {
+        ofxOscMessage m;
+        m.setAddress("/play");
+        m.addStringArg(folder_path4);
+        sender4.sendMessage(m, false);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -235,97 +384,8 @@ void ofApp::draw(){
     loopButton->draw();
 }
 
-void ofApp::sendMessageToAll(ofxOscMessage m){
-    sender1video.sendMessage(m, false);
-    sender1audio.sendMessage(m, false);
-    sender2.sendMessage(m, false);
-    sender3.sendMessage(m, false);
-    sender4.sendMessage(m, false);
-    senderLocal.sendMessage(m, false);
-}
-
-void ofApp::playAllVideos(){
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path1);
-        sender1video.sendMessage(m, false);
-        sender1audio.sendMessage(m, false);
-        senderLocal.sendMessage(m, false);
-    }
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path2);
-        sender2.sendMessage(m, false);
-    }
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path3);
-        sender3.sendMessage(m, false);
-    }
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path4);
-        sender4.sendMessage(m, false);
-    }
-}
 
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-    //play videos one shot(p) or in a loop(l)
-    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
-        playAllVideos();
-        if(key == 'p' || key == 'P'){
-            ofxOscMessage m;
-            m.setAddress("/unloop");
-            sendMessageToAll(m);
-        } else {
-            ofxOscMessage m;
-            m.setAddress("/loop");
-            sendMessageToAll(m);
-        }
-//        soundPlayer.play();
-    }
-    //stop playing
-    if( key == 's' || key == 'S'){
-        ofxOscMessage m;
-        m.setAddress("/stop");
-        sendMessageToAll(m);
-//        soundPlayer.stop();
-    }
-    //play next video
-    if( key == 'n' || key == 'N'){
-        ofxOscMessage m;
-        m.setAddress("/next");
-        sendMessageToAll(m);
-        m.setAddress("/loop");
-        sendMessageToAll(m);
-    }
-    //play previous video
-    if( key == 'b' || key == 'B'){
-        ofxOscMessage m;
-        m.setAddress("/prev");
-        sendMessageToAll(m);
-        m.setAddress("/loop");
-        sendMessageToAll(m);
-    }
-    //toggle info screen
-    if( key == 'i' || key == 'I'){
-        ofxOscMessage m;
-        m.setAddress("/info");
-        sendMessageToAll(m);
-    }
-    //quit HPlayer
-    if( key == 'Q'){
-        ofxOscMessage m;
-        m.setAddress("/quit");
-        sendMessageToAll(m);
-    }
-}
 
 ////--------------------------------------------------------------
 //void ofApp::keyReleased(int key){
