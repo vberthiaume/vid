@@ -22,18 +22,18 @@ public:
     void update();
     void draw();
     
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
+    void keyPressed   (int key);
+    void keyReleased  (int key);
+    void mouseMoved   (int x, int y);
+    void mouseDragged (int x, int y, int button);
+    void mousePressed (int x, int y, int button);
     void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
+    void mouseEntered (int x, int y);
+    void mouseExited  (int x, int y);
     void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
-    void printMsgs(ofxOscMessage &m);
+    void dragEvent    (ofDragInfo dragInfo);
+    void gotMessage   (ofMessage msg);
+    void printMsgs    (ofxOscMessage &m);
     
     ofTrueTypeFont font;
     ofxOscReceiver receiver;
@@ -44,14 +44,13 @@ public:
     
     int mouseX, mouseY;
     string mouseButtonState;
-    
     ofImage receivedImage;
+    
 #if PLAY_AUDIO
     ofSoundPlayer soundPlayers[6];
-#endif
-    
     bool m_bIsPlaying;
     bool m_bIsLooping;
     bool m_bPlayerDone[6]{false};
     bool m_bPlayerStarted[6]{false};
+#endif
 };
