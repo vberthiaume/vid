@@ -52,9 +52,9 @@ void ofApp::setup(){
     
     //All IP addresses
     //pi1_ip = "192.168.0.101";
-    pi1_ip = "192.168.1.108";
-    pi2_ip = "192.168.0.102";
-    //pi2_ip = "192.168.1.110";
+    pi1_ip = "192.168.1.105";
+//    pi2_ip = "192.168.0.102";
+    pi2_ip = "192.168.1.107";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
     
@@ -67,12 +67,14 @@ void ofApp::setup(){
     senderLocal.setup(local_ip, iPiAudioPort);
 #endif
     
+    //main folder paths. Pressing 'p' or 'l' will play or loop all media files in these folders
 #if USE_FILES_RIGHT_ON_SD_CARD
     folder_path1 = "/media/pi/data0/videos/";
     folder_path2 = "/media/pi/data0/videos/";
     folder_path3 = "/media/pi/data0/videos/";
     folder_path4 = "/media/pi/data0/videos/";
 #else
+#warning need to have a 5th folder for audio-only RPI (or something)
     folder_path1 = "/media/pi/usb1/";
     folder_path2 = "/media/pi/usb2/";
     folder_path3 = "/media/pi/usb3/";
@@ -152,15 +154,20 @@ void ofApp::keyPressed(int key){
         sendMessageToAll(m);
     }
     //toggle info screen
-    if( key == 'i' || key == 'I'){
+    if(key == 'i' || key == 'I'){
         ofxOscMessage m;
         m.setAddress("/info");
         sendMessageToAll(m);
     }
     //quit HPlayer
-    if( key == 'Q'){
+    if(key == 'Q'){
         ofxOscMessage m;
         m.setAddress("/quit");
+        sendMessageToAll(m);
+    }
+    if(key == 'a'){
+        ofxOscMessage m;
+        m.setAddress("/getStatus");
         sendMessageToAll(m);
     }
 }
@@ -267,10 +274,6 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
     senderLocal.sendMessage(m, false);
 #endif
 }
-
-
-
-
 
 
 
