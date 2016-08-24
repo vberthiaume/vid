@@ -41,25 +41,30 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
+
+
+
+
 void ofApp::setup(){
 
 	ofBackground(25, 25, 25);
     ofSetFrameRate(20);
     
-//    pi1_ip = "192.168.0.101";
+    //All IP addresses
+    //pi1_ip = "192.168.0.101";
     pi1_ip = "192.168.1.108";
     pi2_ip = "192.168.0.102";
-//    pi2_ip = "192.168.1.110";
+    //pi2_ip = "192.168.1.110";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
+    
+    //OSC Ports
     iPiVideoPort = 9000;
     
 #if AUDIO_OSCRECEIVER_MAC
     local_ip ="127.0.0.1";
-#endif
-
-#if AUDIO_OSCRECEIVER_RPI
     iPiAudioPort = 9500;
+    senderLocal.setup(local_ip, iPiAudioPort);
 #endif
     
 #if USE_FILES_RIGHT_ON_SD_CARD
@@ -79,34 +84,30 @@ void ofApp::setup(){
     sender2.setup(pi2_ip, iPiVideoPort);
     sender3.setup(pi3_ip, iPiVideoPort);
     sender4.setup(pi4_ip, iPiVideoPort);
-
 #if AUDIO_OSCRECEIVER_RPI
+    iPiAudioPort = 9500;
     sender1audio.setup(pi1_ip, iPiAudioPort);
 #endif
-#if AUDIO_OSCRECEIVER_MAC
-    senderLocal.setup(local_ip, iPiAudioPort);
-#endif
-    
+
+    //set up various gui elements
     filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
     filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
     filesToPlayTextInput->setWidth(300, .4);
-    
     playButton = new ofxDatGuiButton("PLAY ONCE");
     playButton->setWidth(75);
     loopButton = new ofxDatGuiButton("LOOP");
     loopButton->setWidth(50);
-    
     playButton->onButtonEvent(this, &ofApp::onButtonEvent);
     loopButton->onButtonEvent(this, &ofApp::onButtonEvent);
 }
 
-void ofApp::setVolumeToMax(){
-    //make sure sound is set to 100%
-    ofxOscMessage m;
-    m.setAddress("/volume");
-    m.addIntArg(100);
-    sendMessageToAll(m);
-}
+//void ofApp::setVolumeToMax(){
+//    //make sure sound is set to 100%
+//    ofxOscMessage m;
+//    m.setAddress("/volume");
+//    m.addIntArg(100);
+//    sendMessageToAll(m);
+//}
 
 void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
     playList = split(e.text, ',');
@@ -166,7 +167,7 @@ void ofApp::keyPressed(int key){
 
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     if (e.target == playButton || e.target == loopButton){
-        setVolumeToMax();
+//        setVolumeToMax();
         if (playList.size() != 0){
             
             
