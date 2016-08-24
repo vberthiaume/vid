@@ -54,7 +54,7 @@ public:
 //    void gotMessage(ofMessage msg);
     
     void sendMessageToAll(ofxOscMessage m);
-    void playAllVideos();
+    void playOrLoopAllVideos(bool bLoop);
 //    void setVolumeToMax();
     void playWithAudioThenStop(string i);
     

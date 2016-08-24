@@ -120,18 +120,25 @@ void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
 
 void ofApp::keyPressed(int key){
     //play videos one shot(p) or in a loop(l)
-    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
-        playAllVideos();
-        if(key == 'p' || key == 'P'){
-            ofxOscMessage m;
-            m.setAddress("/unloop");
-            sendMessageToAll(m);
-        } else {
-            ofxOscMessage m;
-            m.setAddress("/loop");
-            sendMessageToAll(m);
-        }
-        //        soundPlayer.play();
+//    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
+//        playAllVideos();
+//        if(key == 'p' || key == 'P'){
+//            ofxOscMessage m;
+//            m.setAddress("/unloop");
+//            sendMessageToAll(m);
+//        } else {
+//            ofxOscMessage m;
+//            m.setAddress("/loop");
+//            sendMessageToAll(m);
+//        }
+//        //        soundPlayer.play();
+//    }
+    if(key == 'p' || key == 'P'){
+        playOrLoopAllVideos(false);
+    }
+    
+    if(key == 'l' || key == 'L'){
+        playOrLoopAllVideos(true);
     }
     //stop playing
     if( key == 's' || key == 'S'){
@@ -145,16 +152,16 @@ void ofApp::keyPressed(int key){
         ofxOscMessage m;
         m.setAddress("/next");
         sendMessageToAll(m);
-        m.setAddress("/loop");
-        sendMessageToAll(m);
+//        m.setAddress("/loop");
+//        sendMessageToAll(m);
     }
     //play previous video
     if( key == 'b' || key == 'B'){
         ofxOscMessage m;
         m.setAddress("/prev");
         sendMessageToAll(m);
-        m.setAddress("/loop");
-        sendMessageToAll(m);
+//        m.setAddress("/loop");
+//        sendMessageToAll(m);
     }
     //toggle info screen
     if(key == 'i' || key == 'I'){
@@ -279,11 +286,10 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
 }
 
 
-
-void ofApp::playAllVideos(){
+void ofApp::playOrLoopAllVideos(bool p_bLoop){
     {
         ofxOscMessage m;
-        m.setAddress("/play");
+        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
         m.addStringArg(folder_path1);
         sender1video.sendMessage(m, false);
 #if AUDIO_OSCRECEIVER_RPI
@@ -295,19 +301,19 @@ void ofApp::playAllVideos(){
     }
     {
         ofxOscMessage m;
-        m.setAddress("/play");
+        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
         m.addStringArg(folder_path2);
         sender2.sendMessage(m, false);
     }
     {
         ofxOscMessage m;
-        m.setAddress("/play");
+        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
         m.addStringArg(folder_path3);
         sender3.sendMessage(m, false);
     }
     {
         ofxOscMessage m;
-        m.setAddress("/play");
+        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
         m.addStringArg(folder_path4);
         sender4.sendMessage(m, false);
     }
@@ -359,9 +365,6 @@ void ofApp::printMsgs(ofxOscMessage &m){
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", MUTE: " + m.getArgAsString(i);
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
-    
-    
-    
     
 #if USE_GUI
     // add to the list of strings to display
