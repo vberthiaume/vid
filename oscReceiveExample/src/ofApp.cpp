@@ -5,12 +5,13 @@ void ofApp::setup(){
 	// listen on the given port
 	cout << "listening for osc messages on port " << PORT << "\n";
 	receiver.setup(PORT);
-
 	current_msg_string = 0;
+    
 #if USE_GUI
 	ofBackground(30, 30, 130);
 #endif
-    
+
+#if PLAY_AUDIO
 #ifdef __APPLE__
 //    soundPlayers[0].load("/Users/nicolai/Downloads/audio1.wav");
 //    soundPlayers[1].load("/Users/nicolai/Downloads/audio2.wav");
@@ -18,14 +19,12 @@ void ofApp::setup(){
 //    soundPlayers[3].load("/Users/nicolai/Downloads/audio4.wav");
 //    soundPlayers[4].load("/Users/nicolai/Downloads/audio5.wav");
 //    soundPlayers[5].load("/Users/nicolai/Downloads/audio6.wav");
-    
     soundPlayers[0].load("/Volumes/usb1/audio/audio1.wav");
     soundPlayers[1].load("/Volumes/usb1/audio/audio2.wav");
     soundPlayers[2].load("/Volumes/usb1/audio/audio3.wav");
     soundPlayers[3].load("/Volumes/usb1/audio/audio4.wav");
     soundPlayers[4].load("/Volumes/usb1/audio/audio5.wav");
     soundPlayers[5].load("/Volumes/usb1/audio/audio6.wav");
-    
 #else
     //soundPlayers[0].load("/home/pi/Desktop/audio1.wav");
     //soundPlayers[1].load("/home/pi/Desktop/audio2.wav");
@@ -33,14 +32,13 @@ void ofApp::setup(){
     //soundPlayers[3].load("/home/pi/Desktop/audio4.wav");
     //soundPlayers[4].load("/home/pi/Desktop/audio5.wav");
     //soundPlayers[5].load("/home/pi/Desktop/audio6.wav");
-    
     soundPlayers[0].load("/media/pi/usb1/audio/audio1.wav");
     soundPlayers[1].load("/media/pi/usb1/audio/audio2.wav");
     soundPlayers[2].load("/media/pi/usb1/audio/audio3.wav");
     soundPlayers[3].load("/media/pi/usb1/audio/audio4.wav");
     soundPlayers[4].load("/media/pi/usb1/audio/audio5.wav");
     soundPlayers[5].load("/media/pi/usb1/audio/audio6.wav");
-
+#endif
 #endif
     
     m_bIsPlaying = false;
@@ -63,7 +61,8 @@ void ofApp::update(){
         // get the next message
         ofxOscMessage m;
         receiver.getNextMessage(m);
-        
+
+#if PLAY_AUDIO
         // check for mouse moved message
         if(m.getAddress() == "/play" || m.getAddress() == "/loop"){
             if (m.getAddress() == "/loop"){
@@ -76,7 +75,6 @@ void ofApp::update(){
             soundPlayers[0].play();
             m_bPlayerStarted[0] = true;
         }
-        
         if(m.getAddress() == "/stop"){
             m_bIsPlaying = false;
             m_bIsLooping = false;
@@ -86,10 +84,12 @@ void ofApp::update(){
                 m_bPlayerStarted[i] = false;
             }
         }
-
+#endif
+        
         printMsgs(m);
     }
     
+#if PLAY_AUDIO
     if (m_bIsPlaying || m_bIsLooping){
         
         //return if currently playing a sound
@@ -147,17 +147,20 @@ void ofApp::update(){
             m_bPlayerStarted[1] = true;
         }
     }
+#endif
+    
 }
 
 void ofApp::printMsgs(ofxOscMessage &m){
     // unrecognized message: display on the bottom of the screen
     string msg_string;
-    msg_string = m.getAddress();
-    msg_string += ": ";
+    msg_string = "IP: " + m.getRemoteIp();
+    msg_string += ", port: " + m.getAddress();
+    msg_string += ", args [ ";
     for(int i = 0; i < m.getNumArgs(); i++){
         // get the argument type
         msg_string += m.getArgTypeName(i);
-        msg_string += ":";
+        msg_string += ": ";
         // display the argument - make sure we get the right type
         if(m.getArgType(i) == OFXOSC_TYPE_INT32){
             msg_string += ofToString(m.getArgAsInt32(i));
@@ -171,7 +174,9 @@ void ofApp::printMsgs(ofxOscMessage &m){
         else{
             msg_string += "unknown";
         }
+        msg_string += ", ";
     }
+    msg_string += " ] ";
 #if USE_GUI
     // add to the list of strings to display
     msg_strings[current_msg_string] = msg_string;

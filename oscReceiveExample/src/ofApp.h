@@ -6,9 +6,14 @@
 #define PORT 9500
 #define NUM_MSG_STRINGS 20
 
-#ifndef USE_GUI
-#define USE_GUI 0
-#endif
+//#ifndef USE_GUI
+//#define USE_GUI 1
+//#endif
+
+//#ifndef PLAY_AUDIO
+//#define PLAY_AUDIO 1
+//#endif
+
 
 class ofApp : public ofBaseApp {
 public:
@@ -41,8 +46,9 @@ public:
     string mouseButtonState;
     
     ofImage receivedImage;
-    
+#if PLAY_AUDIO
     ofSoundPlayer soundPlayers[6];
+#endif
     
     bool m_bIsPlaying;
     bool m_bIsLooping;
