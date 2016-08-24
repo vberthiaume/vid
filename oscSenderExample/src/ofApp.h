@@ -5,6 +5,8 @@
 #include "ofxDatGui.h"
 #include "ofAppRunner.h"
 
+#define NUM_MSG_STRINGS 20
+
 // OPTION 2
 //#ifndef AUDIO_OSCSENDER_MAC
 //#define AUDIO_OSCSENDER_MAC 1
@@ -23,6 +25,11 @@
 //#ifndef USE_FILES_RIGHT_ON_SD_CARD
 //#define USE_FILES_RIGHT_ON_SD_CARD 1
 //#endif
+
+//this is to print osc messages in main gui window
+#ifndef USE_GUI
+#define USE_GUI 1
+#endif
 
 
 //--------------------------------------------------------
@@ -65,8 +72,14 @@ public:
     
     string pi1_ip, pi2_ip, pi3_ip, pi4_ip, local_ip;
     string folder_path1, folder_path2, folder_path3, folder_path4;
-    int iPiVideoPort, iPiAudioPort;
+    int iPiVideoPort, iPiAudioPort, m_iReceivePort;
     
     vector<string> playList;
+    
+    ofxOscReceiver receiver;
+    int current_msg_string;
+    string msg_strings[NUM_MSG_STRINGS];
+    float timers[NUM_MSG_STRINGS];
+    void printMsgs    (ofxOscMessage &m);
 };
 

@@ -20,8 +20,6 @@
 //    /host <ip>      : Change IP for OSC out
 //    /getStatus      : Ask for status info
 //    /quit           : Exit the player
-//--------------------------------------------------------------
-
 
 //taken from http://stackoverflow.com/questions/236129/split-a-string-in-c
 #include <sstream>
@@ -40,10 +38,7 @@ std::vector<std::string> split(const std::string &s, char delim) {
     split(s, delim, elems);
     return elems;
 }
-
-
-
-
+//--------------------------------------------------------------
 
 void ofApp::setup(){
 
@@ -90,6 +85,12 @@ void ofApp::setup(){
     iPiAudioPort = 9500;
     sender1audio.setup(pi1_ip, iPiAudioPort);
 #endif
+    
+    //osc receiver stuff
+    cout << "listening for osc messages on port " << m_iReceivePort << "\n";
+    receiver.setup(m_iReceivePort);
+    current_msg_string = 0;
+
 
     //set up various gui elements
     filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
@@ -316,6 +317,61 @@ void ofApp::update(){
     filesToPlayTextInput->update();
     playButton->update();
     loopButton->update();
+    
+    // hide old osc messages
+    for(int i = 0; i < NUM_MSG_STRINGS; i++){
+        if(timers[i] < ofGetElapsedTimef()){
+            msg_strings[i] = "";
+        }
+    }
+    
+    // check for waiting osc messages
+    while(receiver.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        receiver.getNextMessage(m);
+        printMsgs(m);
+    }
+}
+
+void ofApp::printMsgs(ofxOscMessage &m){
+    // unrecognized message: display on the bottom of the screen
+    string msg_string;
+    msg_string = "IP: " + m.getRemoteIp();
+    msg_string += ", port: " + m.getAddress();
+    msg_string += ", args [ ";
+    for(int i = 0; i < m.getNumArgs(); i++){
+        // get the argument type
+        msg_string += m.getArgTypeName(i);
+        msg_string += ": ";
+        // display the argument - make sure we get the right type
+        if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+            msg_string += ofToString(m.getArgAsInt32(i));
+        }
+        else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+            msg_string += ofToString(m.getArgAsFloat(i));
+        }
+        else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+            msg_string += m.getArgAsString(i);
+        }
+        else{
+            msg_string += "unknown";
+        }
+        msg_string += ", ";
+    }
+    msg_string += " ] ";
+    
+#if USE_GUI
+    // add to the list of strings to display
+    msg_strings[current_msg_string] = msg_string;
+    timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
+    current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
+    // clear the next line
+    msg_strings[current_msg_string] = "";
+#else
+    std:: cout << msg_string << "\n";
+#endif
+    
 }
 
 //--------------------------------------------------------------
@@ -354,6 +410,20 @@ void ofApp::draw(){
     loopButton->setPosition(x+300+5+75+5, y);
     playButton->draw();
     loopButton->draw();
+    y += 30;
+    
+    
+#if USE_GUI
+    string osc_buf;
+    buf = "listening for osc messages on port" + ofToString(m_iReceivePort);
+    //ofDrawBitmapString(osc_buf, 10, 20);
+    ofDrawBitmapString(osc_buf, x, y);
+    y += 20;
+    
+    for(int i = 0; i < NUM_MSG_STRINGS; i++){
+        ofDrawBitmapString(msg_strings[i], x, y + 15 * i);
+    }
+#endif
 }
 
 #if AUDIO_OSCSENDER_MAC
