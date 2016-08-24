@@ -87,6 +87,7 @@ void ofApp::setup(){
 #endif
     
     //osc receiver stuff
+    m_iReceivePort = 9500;
     cout << "listening for osc messages on port " << m_iReceivePort << "\n";
     receiver.setup(m_iReceivePort);
     current_msg_string = 0;
@@ -364,14 +365,12 @@ void ofApp::printMsgs(ofxOscMessage &m){
 #if USE_GUI
     // add to the list of strings to display
     msg_strings[current_msg_string] = msg_string;
-    timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
+    timers[current_msg_string] = ofGetElapsedTimef() + 10.0f;
     current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
     // clear the next line
     msg_strings[current_msg_string] = "";
-#else
-    std:: cout << msg_string << "\n";
 #endif
-    
+    std:: cout << msg_string << "\n";    
 }
 
 //--------------------------------------------------------------
