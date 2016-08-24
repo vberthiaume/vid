@@ -39,11 +39,9 @@ void ofApp::setup(){
     soundPlayers[4].load("/media/pi/usb1/audio/audio5.wav");
     soundPlayers[5].load("/media/pi/usb1/audio/audio6.wav");
 #endif
-#endif
-    
     m_bIsPlaying = false;
     m_bIsLooping = false;
-
+#endif
 }
 
 //--------------------------------------------------------------
@@ -180,7 +178,7 @@ void ofApp::printMsgs(ofxOscMessage &m){
 #if USE_GUI
     // add to the list of strings to display
     msg_strings[current_msg_string] = msg_string;
-    timers[current_msg_string] = ofGetElapsedTimef() + 5.0f;
+    timers[current_msg_string] = ofGetElapsedTimef() + 10.0f;
     current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
     // clear the next line
     msg_strings[current_msg_string] = "";
