@@ -340,68 +340,42 @@ void ofApp::printMsgs(ofxOscMessage &m){
     // unrecognized message: display on the bottom of the screen
     string msg_string;
     msg_string = "IP: " + m.getRemoteIp();
-    msg_string += ", port: " + m.getAddress();
-    msg_string += ", args [ ";
     
-    bool bUseLoop = false;
-    if (bUseLoop){
-        for(int i = 0; i < m.getNumArgs(); i++){
-            // get the argument type
-            msg_string += m.getArgTypeName(i);
-            msg_string += ": ";
-            ofxOscArgType argType = m.getArgType(i);
-            
-            // display the argument - make sure we get the right type
-            if(argType == OFXOSC_TYPE_INT32){
-                msg_string += ofToString(m.getArgAsInt32(i));
-            }
-            else if(argType == OFXOSC_TYPE_FLOAT){
-                msg_string += ofToString(m.getArgAsFloat(i));
-            }
-            else if(argType == OFXOSC_TYPE_STRING){
-                msg_string += m.getArgAsString(i);
-            }
-            else {
-                msg_string += "unknown";
-            }
-            
-            msg_string += ", ";
-        }
-    } else {
-        int iTotalArg = m.getNumArgs();
-        int i = -1;
-        
-        //NAME
-        if (++i < iTotalArg) msg_string += "NAME: " + m.getArgAsString(i);
-        //STATUS
+    int iTotalArg = m.getNumArgs();
+    int i = -1;
+    
+    
+    bool bDisplayOnlyRelevant = true;
+    if (bDisplayOnlyRelevant){
+        if (++i < iTotalArg) ;//msg_string += "NAME: " + m.getArgAsString(i);
         if (++i < iTotalArg) msg_string += ", STATUS: " + m.getArgAsString(i);
-        
-        //FILE
         if (++i < iTotalArg) msg_string += ", FILE: " + m.getArgAsString(i);
-        
-        //POSITION
-        if (++i < iTotalArg) msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
-        
-        //DURATION
-        if (++i < iTotalArg) msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
-        
-        //LOOPING
+        if (++i < iTotalArg) ;//msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
+        if (++i < iTotalArg) ;//msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
         if (++i < iTotalArg) msg_string += ", LOOPING: " + ofToString(m.getArgAsInt(i));
-    
-        //VOLUME
+        if (++i < iTotalArg) ;//msg_string += ", VOLUME: " + ofToString(m.getArgAsInt(i));
+        if (++i < iTotalArg) ;//msg_string += ", MUTE: " + m.getArgAsString(i);
+        if (++i < iTotalArg) ;//msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
+        if (++i < iTotalArg) ;//msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
+        
+    } else {
+        msg_string += ", port: " + m.getAddress();
+        msg_string += ", args [ ";
+        
+        if (++i < iTotalArg) msg_string += "NAME: " + m.getArgAsString(i);
+        if (++i < iTotalArg) msg_string += ", STATUS: " + m.getArgAsString(i);
+        if (++i < iTotalArg) msg_string += ", FILE: " + m.getArgAsString(i);
+        if (++i < iTotalArg) msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
+        if (++i < iTotalArg) msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
+        if (++i < iTotalArg) msg_string += ", LOOPING: " + ofToString(m.getArgAsInt(i));
         if (++i < iTotalArg) msg_string += ", VOLUME: " + ofToString(m.getArgAsInt(i));
-        
-        //MUTED
         if (++i < iTotalArg) msg_string += ", MUTE: " + m.getArgAsString(i);
-        
-        //ZOOM
         if (++i < iTotalArg) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
-        
-        //BLUR
         if (++i < iTotalArg) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
+        msg_string += " ] ";
     }
     
-    msg_string += " ] ";
+    
     
 #if USE_GUI
     // add to the list of strings to display
