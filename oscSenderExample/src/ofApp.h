@@ -48,7 +48,7 @@ public:
     
     void sendMessageToAll(ofxOscMessage m);
     void playAllVideos();
-    void setVolumeToMax();
+//    void setVolumeToMax();
     void playWithAudioThenStop(string i);
     
     ofTrueTypeFont font;
