@@ -87,7 +87,7 @@ void ofApp::setup(){
 #endif
     
     //osc receiver stuff
-    m_iReceivePort = 9500;
+    m_iReceivePort = 9999;
     cout << "listening for osc messages on port " << m_iReceivePort << "\n";
     receiver.setup(m_iReceivePort);
     current_msg_string = 0;
@@ -370,7 +370,7 @@ void ofApp::printMsgs(ofxOscMessage &m){
     // clear the next line
     msg_strings[current_msg_string] = "";
 #endif
-    std:: cout << msg_string << "\n";    
+    std:: cout << msg_string << "\n";
 }
 
 //--------------------------------------------------------------
