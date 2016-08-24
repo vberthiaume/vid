@@ -44,12 +44,14 @@ void ofApp::setup(){
 
 	ofBackground(25, 25, 25);
     ofSetFrameRate(20);
+    m_bLooping = false;
     
     //All IP addresses
-    //pi1_ip = "192.168.0.101";
-    pi1_ip = "192.168.1.105";
-//    pi2_ip = "192.168.0.102";
-    pi2_ip = "192.168.1.107";
+//    pi1_ip = "192.168.0.101";
+//    pi1_ip = "192.168.1.105";
+    pi1_ip = "192.168.1.106";
+    pi2_ip = "192.168.0.102";
+//    pi2_ip = "192.168.1.107";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
     
@@ -134,11 +136,18 @@ void ofApp::keyPressed(int key){
 //        //        soundPlayer.play();
 //    }
     if(key == 'p' || key == 'P'){
-        playOrLoopAllVideos(false);
+        playAllVideos();
     }
     
     if(key == 'l' || key == 'L'){
-        playOrLoopAllVideos(true);
+        ofxOscMessage m;
+        m_bLooping = !m_bLooping;
+        if (m_bLooping){
+            m.setAddress("/loop");
+        } else {
+            m.setAddress("/unloop");
+        }
+        sendMessageToAll(m);
     }
     //stop playing
     if( key == 's' || key == 'S'){
@@ -286,10 +295,10 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
 }
 
 
-void ofApp::playOrLoopAllVideos(bool p_bLoop){
+void ofApp::playAllVideos(){
     {
         ofxOscMessage m;
-        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
+        m.setAddress("/play");
         m.addStringArg(folder_path1);
         sender1video.sendMessage(m, false);
 #if AUDIO_OSCRECEIVER_RPI
@@ -301,19 +310,19 @@ void ofApp::playOrLoopAllVideos(bool p_bLoop){
     }
     {
         ofxOscMessage m;
-        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
+        m.setAddress("/play");
         m.addStringArg(folder_path2);
         sender2.sendMessage(m, false);
     }
     {
         ofxOscMessage m;
-        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
+        m.setAddress("/play");
         m.addStringArg(folder_path3);
         sender3.sendMessage(m, false);
     }
     {
         ofxOscMessage m;
-        p_bLoop ? m.setAddress("/playloop") : m.setAddress("/play");
+        m.setAddress("/play");
         m.addStringArg(folder_path4);
         sender4.sendMessage(m, false);
     }

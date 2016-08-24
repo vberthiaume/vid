@@ -54,7 +54,7 @@ public:
 //    void gotMessage(ofMessage msg);
     
     void sendMessageToAll(ofxOscMessage m);
-    void playOrLoopAllVideos(bool bLoop);
+    void playAllVideos();
 //    void setVolumeToMax();
     void playWithAudioThenStop(string i);
     
@@ -81,5 +81,7 @@ public:
     string msg_strings[NUM_MSG_STRINGS];
     float timers[NUM_MSG_STRINGS];
     void printMsgs    (ofxOscMessage &m);
+    
+    bool m_bLooping;
 };
 
