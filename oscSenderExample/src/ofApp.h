@@ -5,18 +5,25 @@
 #include "ofxDatGui.h"
 #include "ofAppRunner.h"
 
-
-//#ifndef SEND_AUDIO_OSC
-//#define SEND_AUDIO_OSC 1 
+// OPTION 2
+//#ifndef AUDIO_OSCSENDER_MAC
+//#define AUDIO_OSCSENDER_MAC 1
 //#endif
 
-//#ifndef OSCRECEIVER_PLAYS_AUDIO
-//#define OSCRECEIVER_PLAYS_AUDIO 1
+// OPTION 2.1
+//#ifndef AUDIO_OSCRECEIVER_MAC
+//#define AUDIO_OSCRECEIVER_MAC 1
 //#endif
 
-#ifndef OSCSENDER_PLAYS_AUDIO
-#define OSCSENDER_PLAYS_AUDIO 1
-#endif
+// OPTION 2.2
+//#ifndef AUDIO_OSCRECEIVER_RPI
+//#define AUDIO_OSCRECEIVER_RPI 1 
+//#endif
+
+//#ifndef USE_FILES_RIGHT_ON_SD_CARD
+//#define USE_FILES_RIGHT_ON_SD_CARD 1
+//#endif
+
 
 //--------------------------------------------------------
 class ofApp : public ofBaseApp {

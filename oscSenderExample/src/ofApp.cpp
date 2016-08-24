@@ -35,7 +35,6 @@ std::vector<std::string> &split(const std::string &s, char delim, std::vector<st
     }
     return elems;
 }
-
 std::vector<std::string> split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, elems);
@@ -48,24 +47,32 @@ void ofApp::setup(){
     ofSetFrameRate(20);
     
 //    pi1_ip = "192.168.0.101";
-    pi1_ip = "192.168.1.110";
+    pi1_ip = "192.168.1.108";
     pi2_ip = "192.168.0.102";
+//    pi2_ip = "192.168.1.110";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
     iPiVideoPort = 9000;
     
-#if OSCRECEIVER_PLAYS_AUDIO
+#if AUDIO_OSCRECEIVER_MAC
     local_ip ="127.0.0.1";
 #endif
 
-#if SEND_AUDIO_OSC
+#if AUDIO_OSCRECEIVER_RPI
     iPiAudioPort = 9500;
 #endif
     
+#if USE_FILES_RIGHT_ON_SD_CARD
+    folder_path1 = "/media/pi/data0/videos/";
+    folder_path2 = "/media/pi/data0/videos/";
+    folder_path3 = "/media/pi/data0/videos/";
+    folder_path4 = "/media/pi/data0/videos/";
+#else
     folder_path1 = "/media/pi/usb1/";
     folder_path2 = "/media/pi/usb2/";
     folder_path3 = "/media/pi/usb3/";
     folder_path4 = "/media/pi/usb4/";
+#endif
     
 	// open outgoing connections
 	sender1video.setup(pi1_ip, iPiVideoPort);
@@ -73,10 +80,10 @@ void ofApp::setup(){
     sender3.setup(pi3_ip, iPiVideoPort);
     sender4.setup(pi4_ip, iPiVideoPort);
 
-#if SEND_AUDIO_OSC
+#if AUDIO_OSCRECEIVER_RPI
     sender1audio.setup(pi1_ip, iPiAudioPort);
 #endif
-#if OSCRECEIVER_PLAYS_AUDIO
+#if AUDIO_OSCRECEIVER_MAC
     senderLocal.setup(local_ip, iPiAudioPort);
 #endif
     
@@ -157,44 +164,16 @@ void ofApp::keyPressed(int key){
     }
 }
 
-
-void ofApp::playWithAudioThenStop(string strFileNumber){
-    ofxOscMessage m1, m2, m3, m4;
-    soundPlayer.load("/Users/nicolai/Downloads/RPI/nexus/sansAudio/audio/audio" + strFileNumber + ".wav");
-    soundPlayer.play();
-    
-    m1.setAddress("/play");
-    m2.setAddress("/play");
-    m3.setAddress("/play");
-    m4.setAddress("/play");
-    m1.addStringArg(folder_path1+"video" + strFileNumber + ".mp4");
-    m2.addStringArg(folder_path2+"video" + strFileNumber + ".mp4");
-    m3.addStringArg(folder_path3+"video" + strFileNumber + ".mp4");
-    m4.addStringArg(folder_path4+"video" + strFileNumber + ".mp4");
-    sender1video.sendMessage(m1, false);
-    sender2.sendMessage(m2, false);
-    sender3.sendMessage(m3, false);
-    sender4.sendMessage(m4, false);
-    while(soundPlayer.isPlaying()){
-        ofSleepMillis(50);
-    }
-    m1.clear();
-    m1.setAddress("/stop");
-    sender1video.sendMessage(m1, false);
-    sender2.sendMessage(m1, false);
-    sender3.sendMessage(m1, false);
-    sender4.sendMessage(m1, false);
-    
-}
-
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     if (e.target == playButton || e.target == loopButton){
         setVolumeToMax();
         if (playList.size() != 0){
             
             
-            
-#if OSCSENDER_PLAYS_AUDIO
+#if AUDIO_OSCSENDER_MAC
+            ofxOscMessage m;
+            m.setAddress("/unloop");
+            sendMessageToAll(m);
             for(auto& video : playList){
                 playWithAudioThenStop(video);
             }
@@ -262,13 +241,13 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             sender2.sendMessage(m2, false);
             sender3.sendMessage(m3, false);
             sender4.sendMessage(m4, false);
-#if SEND_AUDIO_OSC
+#if AUDIO_OSCRECEIVER_RPI
             sender1audio.sendMessage(m1, false);
-#endif  //SEND_AUDIO_OSC
-#if OSCRECEIVER_PLAYS_AUDIO
+#endif  //AUDIO_OSCRECEIVER_RPI
+#if AUDIO_OSCRECEIVER_MAC
             senderLocal.sendMessage(m1, false);
-#endif  //OSCRECEIVER_PLAYS_AUDIO
-#endif  //OSCSENDER_PLAYS_AUDIO
+#endif  //AUDIO_OSCRECEIVER_MAC
+#endif  //AUDIO_OSCSENDER_MAC
         }
     }
 }
@@ -280,10 +259,10 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
     sender4.sendMessage(m, false);
-#if SEND_AUDIO_OSC
+#if AUDIO_OSCRECEIVER_RPI
     sender1audio.sendMessage(m, false);
 #endif
-#if OSCRECEIVER_PLAYS_AUDIO
+#if AUDIO_OSCRECEIVER_MAC
     senderLocal.sendMessage(m, false);
 #endif
 }
@@ -300,10 +279,10 @@ void ofApp::playAllVideos(){
         m.setAddress("/play");
         m.addStringArg(folder_path1);
         sender1video.sendMessage(m, false);
-#if SEND_AUDIO_OSC
+#if AUDIO_OSCRECEIVER_RPI
         sender1audio.sendMessage(m, false);
 #endif
-#if OSCRECEIVER_PLAYS_AUDIO
+#if AUDIO_OSCRECEIVER_MAC
         senderLocal.sendMessage(m, false);
 #endif
     }
@@ -326,17 +305,6 @@ void ofApp::playAllVideos(){
         sender4.sendMessage(m, false);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 //--------------------------------------------------------------
@@ -384,8 +352,36 @@ void ofApp::draw(){
     loopButton->draw();
 }
 
-
-
+#if AUDIO_OSCSENDER_MAC
+void ofApp::playWithAudioThenStop(string strFileNumber){
+    ofxOscMessage m1, m2, m3, m4;
+    soundPlayer.load("/Users/nicolai/Downloads/RPI/nexus/sansAudio/audio/audio" + strFileNumber + ".wav");
+    soundPlayer.play();
+    
+    m1.setAddress("/play");
+    m2.setAddress("/play");
+    m3.setAddress("/play");
+    m4.setAddress("/play");
+    m1.addStringArg(folder_path1+"video" + strFileNumber + ".mp4");
+    m2.addStringArg(folder_path2+"video" + strFileNumber + ".mp4");
+    m3.addStringArg(folder_path3+"video" + strFileNumber + ".mp4");
+    m4.addStringArg(folder_path4+"video" + strFileNumber + ".mp4");
+    sender1video.sendMessage(m1, false);
+    sender2.sendMessage(m2, false);
+    sender3.sendMessage(m3, false);
+    sender4.sendMessage(m4, false);
+    while(soundPlayer.isPlaying()){
+        ofSleepMillis(50);
+    }
+    m1.clear();
+    m1.setAddress("/stop");
+    sender1video.sendMessage(m1, false);
+    sender2.sendMessage(m1, false);
+    sender3.sendMessage(m1, false);
+    sender4.sendMessage(m1, false);
+    
+}
+#endif
 
 ////--------------------------------------------------------------
 //void ofApp::keyReleased(int key){
