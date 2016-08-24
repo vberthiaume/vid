@@ -338,42 +338,28 @@ void ofApp::update(){
 
 void ofApp::printMsgs(ofxOscMessage &m){
     // unrecognized message: display on the bottom of the screen
+    
+    bool DISPLAY_ALL = false;
+    
     string msg_string;
     msg_string = "IP: " + m.getRemoteIp();
+    
+    if (DISPLAY_ALL) msg_string += ", port: " + m.getAddress();;
     
     int iTotalArg = m.getNumArgs();
     int i = -1;
     
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += "NAME: " + m.getArgAsString(i);
+    if (++i < iTotalArg)                msg_string += ", STATUS: " + m.getArgAsString(i);
+    if (++i < iTotalArg)                msg_string += ", FILE: " + m.getArgAsString(i);
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg)                msg_string += ", LOOPING: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", VOLUME: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", MUTE: " + m.getArgAsString(i);
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
     
-    bool bDisplayOnlyRelevant = true;
-    if (bDisplayOnlyRelevant){
-        if (++i < iTotalArg) ;//msg_string += "NAME: " + m.getArgAsString(i);
-        if (++i < iTotalArg) msg_string += ", STATUS: " + m.getArgAsString(i);
-        if (++i < iTotalArg) msg_string += ", FILE: " + m.getArgAsString(i);
-        if (++i < iTotalArg) ;//msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) ;//msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) msg_string += ", LOOPING: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) ;//msg_string += ", VOLUME: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) ;//msg_string += ", MUTE: " + m.getArgAsString(i);
-        if (++i < iTotalArg) ;//msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) ;//msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
-        
-    } else {
-        msg_string += ", port: " + m.getAddress();
-        msg_string += ", args [ ";
-        
-        if (++i < iTotalArg) msg_string += "NAME: " + m.getArgAsString(i);
-        if (++i < iTotalArg) msg_string += ", STATUS: " + m.getArgAsString(i);
-        if (++i < iTotalArg) msg_string += ", FILE: " + m.getArgAsString(i);
-        if (++i < iTotalArg) msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) msg_string += ", LOOPING: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) msg_string += ", VOLUME: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) msg_string += ", MUTE: " + m.getArgAsString(i);
-        if (++i < iTotalArg) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
-        if (++i < iTotalArg) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
-        msg_string += " ] ";
-    }
     
     
     
