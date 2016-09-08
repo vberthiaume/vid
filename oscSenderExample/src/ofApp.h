@@ -12,13 +12,6 @@
 #define OSC_SENDER_PLAYS_AUDIO 1
 #endif
 
-
-//this is to print osc messages in main gui window
-#ifndef USE_GUI
-#define USE_GUI 1
-#endif
-
-
 //--------------------------------------------------------
 class ofApp : public ofBaseApp {
     void boilerplate();

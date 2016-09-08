@@ -209,15 +209,13 @@ void ofApp::printMsgs(ofxOscMessage &m){
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
     
-#if USE_GUI
     // add to the list of strings to display
     msg_strings[current_msg_string] = msg_string;
     timers[current_msg_string] = ofGetElapsedTimef() + 10.0f;
     current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
     // clear the next line
     msg_strings[current_msg_string] = "";
-#endif
-    std:: cout << msg_string << "\n";
+    cout << msg_string << "\n";
 }
 
 //--------------------------------------------------------------
@@ -250,18 +248,9 @@ void ofApp::draw(){
     loopButton->draw();
     y += 60;
     
-    
-#if USE_GUI
-    string osc_buf;
-    osc_buf = "listening for osc messages on port " + ofToString(m_iReceivePort);
-    //ofDrawBitmapString(osc_buf, 10, 20);
-    ofDrawBitmapString(osc_buf, x, y);
-    y += 20;
-    
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
         ofDrawBitmapString(msg_strings[i], x, y + 15 * i);
     }
-#endif
     
 #if OSC_SENDER_PLAYS_AUDIO
     if (m_bStartedSoundPlayer){
@@ -329,7 +318,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
                 m2.setAddress("/play");
                 m3.setAddress("/play");
                 m4.setAddress("/play");
-            } else if (e.target == loopButton){
+            } else {
                 cout << "loop\n";
                 //                ofxOscMessage m;
                 //                m.setAddress("/loop");
