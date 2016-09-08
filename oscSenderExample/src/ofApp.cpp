@@ -53,7 +53,8 @@ void ofApp::setup(){
     pi4_ip = "192.168.0.104";
     
 #if OSC_SENDER_PLAYS_AUDIO
-    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/AAAoriginaux/audio/";
+//    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/AAAoriginaux/audio/";
+    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/nexus30secKeyboard/audio/";
 #endif
     
     
