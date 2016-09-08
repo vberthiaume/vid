@@ -52,8 +52,12 @@ void ofApp::setup(){
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
     
+#if OSC_SENDER_PLAYS_AUDIO
+    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/AAAoriginaux/audio/";
+#endif
     
-#if AUDIO_OSCRECEIVER_MAC
+    
+#if OSC_RECEIVER_PLAYS_AUDIO
     local_ip ="127.0.0.1";
     iPiAudioPort = 9500;
     senderLocal.setup(local_ip, iPiAudioPort);
@@ -131,11 +135,11 @@ void ofApp::keyPressed(int key){
 
 
 void ofApp::sendMessageToAll(ofxOscMessage m){
-    sender1video.sendMessage(m, false);
+    sender1.sendMessage(m, false);
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
     sender4.sendMessage(m, false);
-#if AUDIO_OSCRECEIVER_MAC
+#if OSC_RECEIVER_PLAYS_AUDIO
     senderLocal.sendMessage(m, false);
 #endif
 }
@@ -146,8 +150,8 @@ void ofApp::playAllVideos(){
         ofxOscMessage m;
         m.setAddress("/play");
         m.addStringArg(folder_path1);
-        sender1video.sendMessage(m, false);
-#if AUDIO_OSCRECEIVER_MAC
+        sender1.sendMessage(m, false);
+#if OSC_RECEIVER_PLAYS_AUDIO
         senderLocal.sendMessage(m, false);
 #endif
     }
@@ -261,7 +265,7 @@ void ofApp::draw(){
     
 #if USE_GUI
     string osc_buf;
-    osc_buf = "listening for osc messages on port" + ofToString(m_iReceivePort);
+    osc_buf = "listening for osc messages on port " + ofToString(m_iReceivePort);
     //ofDrawBitmapString(osc_buf, 10, 20);
     ofDrawBitmapString(osc_buf, x, y);
     y += 20;
@@ -270,13 +274,30 @@ void ofApp::draw(){
         ofDrawBitmapString(msg_strings[i], x, y + 15 * i);
     }
 #endif
+    
+#if OSC_SENDER_PLAYS_AUDIO
+    if (m_bStartedSoundPlayer){
+        if (soundPlayer.isPlaying()){
+            m_bSoundPlayerIsPlaying = true;
+        } else {
+            ofxOscMessage mStop;
+            mStop.setAddress("/stop");
+            sendMessageToAll(mStop);
+            m_bSoundPlayerIsPlaying = false;
+            m_bStartedSoundPlayer = false;
+        }
+    }
+#endif
+    
 }
 
-#if MAC_PLAYS_AUDIO
+#if OSC_SENDER_PLAYS_AUDIO
 void ofApp::playWithAudioThenStop(string strFileNumber){
     ofxOscMessage m1, m2, m3, m4;
-    soundPlayer.load("/Users/nicolai/Downloads/RPI/nexus/sansAudio/audio/audio" + strFileNumber + ".wav");
+    soundPlayer.load(m_sMacAudioPath + "audio" + strFileNumber + ".wav");
     soundPlayer.play();
+
+    m_bStartedSoundPlayer = true;
     
     m1.setAddress("/play");
     m2.setAddress("/play");
@@ -286,20 +307,11 @@ void ofApp::playWithAudioThenStop(string strFileNumber){
     m2.addStringArg(folder_path2+"video" + strFileNumber + ".mp4");
     m3.addStringArg(folder_path3+"video" + strFileNumber + ".mp4");
     m4.addStringArg(folder_path4+"video" + strFileNumber + ".mp4");
-    sender1video.sendMessage(m1, false);
+    sender1.sendMessage(m1, false);
     sender2.sendMessage(m2, false);
     sender3.sendMessage(m3, false);
     sender4.sendMessage(m4, false);
-    while(soundPlayer.isPlaying()){
-        ofSleepMillis(50);
-    }
-    m1.clear();
-    m1.setAddress("/stop");
-    sender1video.sendMessage(m1, false);
-    sender2.sendMessage(m1, false);
-    sender3.sendMessage(m1, false);
-    sender4.sendMessage(m1, false);
-    
+
 }
 #endif
 
@@ -311,7 +323,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
         if (playList.size() != 0){
             
             
-#if MAC_PLAYS_AUDIO
+#if OSC_SENDER_PLAYS_AUDIO
             ofxOscMessage m;
             m.setAddress("/unloop");
             sendMessageToAll(m);
@@ -378,14 +390,14 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
                     m4.addStringArg(folder_path4+"video6.mp4");
                 }
             }
-            sender1video.sendMessage(m1, false);
+            sender1.sendMessage(m1, false);
             sender2.sendMessage(m2, false);
             sender3.sendMessage(m3, false);
             sender4.sendMessage(m4, false);
-#if AUDIO_OSCRECEIVER_MAC
+#if OSC_RECEIVER_PLAYS_AUDIO
             senderLocal.sendMessage(m1, false);
-#endif  //AUDIO_OSCRECEIVER_MAC
-#endif  //MAC_PLAYS_AUDIO
+#endif  //OSC_RECEIVER_PLAYS_AUDIO
+#endif  //OSC_SENDER_PLAYS_AUDIO
         }
     }
 }
@@ -400,7 +412,7 @@ void ofApp::boilerplate(){
     folder_path4 = "/media/pi/usb4/";
     
     // open outgoing connections
-    sender1video.setup(pi1_ip, iPiVideoPort);
+    sender1.setup(pi1_ip, iPiVideoPort);
     sender2.setup(pi2_ip, iPiVideoPort);
     sender3.setup(pi3_ip, iPiVideoPort);
     sender4.setup(pi4_ip, iPiVideoPort);

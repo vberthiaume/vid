@@ -8,13 +8,13 @@
 #define NUM_MSG_STRINGS 20
 
 // OPTION 2
-//#ifndef MAC_PLAYS_AUDIO
-//#define MAC_PLAYS_AUDIO 1
-//#endif
+#ifndef OSC_SENDER_PLAYS_AUDIO
+#define OSC_SENDER_PLAYS_AUDIO 1
+#endif
 
 // OPTION 2.1
-//#ifndef AUDIO_OSCRECEIVER_MAC
-//#define AUDIO_OSCRECEIVER_MAC 1
+//#ifndef OSC_RECEIVER_PLAYS_AUDIO
+//#define OSC_RECEIVER_PLAYS_AUDIO 1
 //#endif
 
 //this is to print osc messages in main gui window
@@ -40,7 +40,7 @@ public:
     void playWithAudioThenStop(string i);
     
     ofTrueTypeFont font;
-    ofxOscSender sender1video, sender1audio, sender2, sender3, sender4, senderLocal;
+    ofxOscSender sender1, sender2, sender3, sender4, senderLocal;
     ofBuffer imgAsBuffer;
     ofImage img;
     ofSoundPlayer soundPlayer;
@@ -66,5 +66,11 @@ public:
     void printMsgs    (ofxOscMessage &m);
     
     bool m_bLooping = false;
+#if OSC_SENDER_PLAYS_AUDIO
+    bool m_bStartedSoundPlayer = false;
+    bool m_bSoundPlayerIsPlaying = false;
+#endif
+    
+    string m_sMacAudioPath;
 };
 
