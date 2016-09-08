@@ -65,6 +65,6 @@ public:
     float timers[NUM_MSG_STRINGS];
     void printMsgs    (ofxOscMessage &m);
     
-    bool m_bLooping;
+    bool m_bLooping = false;
 };
 

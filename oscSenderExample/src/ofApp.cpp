@@ -44,7 +44,6 @@ void ofApp::setup(){
 
 	ofBackground(25, 25, 25);
     ofSetFrameRate(20);
-    m_bLooping = false;
     
     //All IP addresses
 //    pi1_ip = "192.168.0.101"; //NEW RPI1
@@ -68,35 +67,23 @@ void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
 }
 
 void ofApp::keyPressed(int key){
+
     //play videos one shot(p) or in a loop(l)
-//    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
-//        playAllVideos();
-//        if(key == 'p' || key == 'P'){
-//            ofxOscMessage m;
-//            m.setAddress("/unloop");
-//            sendMessageToAll(m);
-//        } else {
-//            ofxOscMessage m;
-//            m.setAddress("/loop");
-//            sendMessageToAll(m);
-//        }
-//        //        soundPlayer.play();
-//    }
-    if(key == 'p' || key == 'P'){
+    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
+        if(key == 'p' || key == 'P'){
+            ofxOscMessage m;
+            m.setAddress("/unloop");
+            sendMessageToAll(m);
+        } else {
+            ofxOscMessage m;
+            m.setAddress("/loop");
+            sendMessageToAll(m);
+        }
         playAllVideos();
+        //        soundPlayer.play();
     }
     
-#warning this only triggers looping and doesn't play
-    if(key == 'l' || key == 'L'){
-        ofxOscMessage m;
-        m_bLooping = !m_bLooping;
-        if (m_bLooping){
-            m.setAddress("/loop");
-        } else {
-            m.setAddress("/unloop");
-        }
-        sendMessageToAll(m);
-    }
+
     
     //stop playing
     if( key == 's' || key == 'S'){
@@ -268,12 +255,12 @@ void ofApp::draw(){
     loopButton->setPosition(x+300+5+75+5, y);
     playButton->draw();
     loopButton->draw();
-    y += 30;
+    y += 60;
     
     
 #if USE_GUI
     string osc_buf;
-    buf = "listening for osc messages on port" + ofToString(m_iReceivePort);
+    osc_buf = "listening for osc messages on port" + ofToString(m_iReceivePort);
     //ofDrawBitmapString(osc_buf, 10, 20);
     ofDrawBitmapString(osc_buf, x, y);
     y += 20;
