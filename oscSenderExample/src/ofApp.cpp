@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-//-------------------- ALL HPlayer COMMANDS --------------------
+//-------------------- ALL HPlayer OSC COMMANDS --------------------
 //    /play [<path1>] [<path2>] ...       : Play the file (or dir) list in order
 //    /playloop [<path1>] [<path2>] ...   : Same as play with playlist loop forced
 //    /load [<path1>] [<path2>] ...       : Pre-Load a playlist
@@ -48,10 +48,7 @@ void ofApp::setup(){
     
     //All IP addresses
     pi1_ip = "192.168.0.101";
-//    pi1_ip = "192.168.1.105";
-//    pi1_ip = "192.168.0.106";
     pi2_ip = "192.168.0.102";
-//    pi2_ip = "192.168.1.107";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
     
@@ -64,44 +61,7 @@ void ofApp::setup(){
     senderLocal.setup(local_ip, iPiAudioPort);
 #endif
     
-    //main folder paths. Pressing 'p' or 'l' will play or loop all media files in these folders
-#if USE_FILES_RIGHT_ON_SD_CARD
-    folder_path1 = "/media/pi/data0/videos/";
-    folder_path2 = "/media/pi/data0/videos/";
-    folder_path3 = "/media/pi/data0/videos/";
-    folder_path4 = "/media/pi/data0/videos/";
-#else
-#warning need to have a 5th folder for audio-only RPI (or something)
-//    folder_path1 = "/media/pi/usb1/audio/";
-    folder_path1 = "/media/pi/usb1/";
-    folder_path2 = "/media/pi/usb2/";
-    folder_path3 = "/media/pi/usb3/";
-    folder_path4 = "/media/pi/usb4/";
-#endif
-    
-	// open outgoing connections
-	sender1video.setup(pi1_ip, iPiVideoPort);
-    sender2.setup(pi2_ip, iPiVideoPort);
-    sender3.setup(pi3_ip, iPiVideoPort);
-    sender4.setup(pi4_ip, iPiVideoPort);
-    
-    //osc receiver stuff
-    m_iReceivePort = 9999;
-    cout << "listening for osc messages on port " << m_iReceivePort << "\n";
-    receiver.setup(m_iReceivePort);
-    current_msg_string = 0;
-
-
-    //set up various gui elements
-    filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
-    filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
-    filesToPlayTextInput->setWidth(300, .4);
-    playButton = new ofxDatGuiButton("PLAY ONCE");
-    playButton->setWidth(75);
-    loopButton = new ofxDatGuiButton("LOOP");
-    loopButton->setWidth(50);
-    playButton->onButtonEvent(this, &ofApp::onButtonEvent);
-    loopButton->onButtonEvent(this, &ofApp::onButtonEvent);
+    boilerplate();
 }
 
 //void ofApp::setVolumeToMax(){
@@ -193,7 +153,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
         if (playList.size() != 0){
             
             
-#if AUDIO_OSCSENDER_MAC
+#if MAC_PLAYS_AUDIO
             ofxOscMessage m;
             m.setAddress("/unloop");
             sendMessageToAll(m);
@@ -267,7 +227,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
 #if AUDIO_OSCRECEIVER_MAC
             senderLocal.sendMessage(m1, false);
 #endif  //AUDIO_OSCRECEIVER_MAC
-#endif  //AUDIO_OSCSENDER_MAC
+#endif  //MAC_PLAYS_AUDIO
         }
     }
 }
@@ -339,7 +299,6 @@ void ofApp::update(){
 }
 
 void ofApp::printMsgs(ofxOscMessage &m){
-    // unrecognized message: display on the bottom of the screen
     
     bool DISPLAY_ALL = false;
     
@@ -425,7 +384,7 @@ void ofApp::draw(){
 #endif
 }
 
-#if AUDIO_OSCSENDER_MAC
+#if MAC_PLAYS_AUDIO
 void ofApp::playWithAudioThenStop(string strFileNumber){
     ofxOscMessage m1, m2, m3, m4;
     soundPlayer.load("/Users/nicolai/Downloads/RPI/nexus/sansAudio/audio/audio" + strFileNumber + ".wav");
@@ -455,6 +414,38 @@ void ofApp::playWithAudioThenStop(string strFileNumber){
     
 }
 #endif
+
+
+void ofApp::boilerplate(){
+    //main folder paths. Pressing 'p' or 'l' will play or loop all media files in these folders
+    folder_path1 = "/media/pi/usb1/";
+    folder_path2 = "/media/pi/usb2/";
+    folder_path3 = "/media/pi/usb3/";
+    folder_path4 = "/media/pi/usb4/";
+    
+    // open outgoing connections
+    sender1video.setup(pi1_ip, iPiVideoPort);
+    sender2.setup(pi2_ip, iPiVideoPort);
+    sender3.setup(pi3_ip, iPiVideoPort);
+    sender4.setup(pi4_ip, iPiVideoPort);
+    
+    //osc receiver stuff
+    m_iReceivePort = 9999;
+    cout << "listening for osc messages on port " << m_iReceivePort << "\n";
+    receiver.setup(m_iReceivePort);
+    current_msg_string = 0;
+    
+    //set up various gui elements
+    filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
+    filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
+    filesToPlayTextInput->setWidth(300, .4);
+    playButton = new ofxDatGuiButton("PLAY ONCE");
+    playButton->setWidth(75);
+    loopButton = new ofxDatGuiButton("LOOP");
+    loopButton->setWidth(50);
+    playButton->onButtonEvent(this, &ofApp::onButtonEvent);
+    loopButton->onButtonEvent(this, &ofApp::onButtonEvent);
+}
 
 ////--------------------------------------------------------------
 //void ofApp::keyReleased(int key){

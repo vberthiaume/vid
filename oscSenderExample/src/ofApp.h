@@ -8,17 +8,13 @@
 #define NUM_MSG_STRINGS 20
 
 // OPTION 2
-//#ifndef AUDIO_OSCSENDER_MAC
-//#define AUDIO_OSCSENDER_MAC 1
+//#ifndef MAC_PLAYS_AUDIO
+//#define MAC_PLAYS_AUDIO 1
 //#endif
 
 // OPTION 2.1
 //#ifndef AUDIO_OSCRECEIVER_MAC
 //#define AUDIO_OSCRECEIVER_MAC 1
-//#endif
-
-//#ifndef USE_FILES_RIGHT_ON_SD_CARD
-//#define USE_FILES_RIGHT_ON_SD_CARD 1
 //#endif
 
 //this is to print osc messages in main gui window
@@ -29,7 +25,7 @@
 
 //--------------------------------------------------------
 class ofApp : public ofBaseApp {
-    
+    void boilerplate();
 public:
     
     void setup();
