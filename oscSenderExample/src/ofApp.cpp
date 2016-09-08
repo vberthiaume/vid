@@ -47,9 +47,9 @@ void ofApp::setup(){
     m_bLooping = false;
     
     //All IP addresses
-//    pi1_ip = "192.168.0.101";
+    pi1_ip = "192.168.0.101";
 //    pi1_ip = "192.168.1.105";
-    pi1_ip = "192.168.1.106";
+//    pi1_ip = "192.168.0.106";
     pi2_ip = "192.168.0.102";
 //    pi2_ip = "192.168.1.107";
     pi3_ip = "192.168.0.103";
@@ -84,10 +84,6 @@ void ofApp::setup(){
     sender2.setup(pi2_ip, iPiVideoPort);
     sender3.setup(pi3_ip, iPiVideoPort);
     sender4.setup(pi4_ip, iPiVideoPort);
-#if AUDIO_OSCRECEIVER_RPI
-    iPiAudioPort = 9500;
-    sender1audio.setup(pi1_ip, iPiAudioPort);
-#endif
     
     //osc receiver stuff
     m_iReceivePort = 9999;
@@ -268,9 +264,6 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             sender2.sendMessage(m2, false);
             sender3.sendMessage(m3, false);
             sender4.sendMessage(m4, false);
-#if AUDIO_OSCRECEIVER_RPI
-            sender1audio.sendMessage(m1, false);
-#endif  //AUDIO_OSCRECEIVER_RPI
 #if AUDIO_OSCRECEIVER_MAC
             senderLocal.sendMessage(m1, false);
 #endif  //AUDIO_OSCRECEIVER_MAC
@@ -286,9 +279,6 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
     sender4.sendMessage(m, false);
-#if AUDIO_OSCRECEIVER_RPI
-    sender1audio.sendMessage(m, false);
-#endif
 #if AUDIO_OSCRECEIVER_MAC
     senderLocal.sendMessage(m, false);
 #endif
@@ -301,9 +291,6 @@ void ofApp::playAllVideos(){
         m.setAddress("/play");
         m.addStringArg(folder_path1);
         sender1video.sendMessage(m, false);
-#if AUDIO_OSCRECEIVER_RPI
-        sender1audio.sendMessage(m, false);
-#endif
 #if AUDIO_OSCRECEIVER_MAC
         senderLocal.sendMessage(m, false);
 #endif

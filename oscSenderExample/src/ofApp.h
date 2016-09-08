@@ -17,11 +17,6 @@
 //#define AUDIO_OSCRECEIVER_MAC 1
 //#endif
 
-// OPTION 2.2
-//#ifndef AUDIO_OSCRECEIVER_RPI
-//#define AUDIO_OSCRECEIVER_RPI 1 
-//#endif
-
 //#ifndef USE_FILES_RIGHT_ON_SD_CARD
 //#define USE_FILES_RIGHT_ON_SD_CARD 1
 //#endif
