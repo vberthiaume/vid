@@ -12,10 +12,6 @@
 #define OSC_SENDER_PLAYS_AUDIO 1
 #endif
 
-// OPTION 2.1
-//#ifndef OSC_RECEIVER_PLAYS_AUDIO
-//#define OSC_RECEIVER_PLAYS_AUDIO 1
-//#endif
 
 //this is to print osc messages in main gui window
 #ifndef USE_GUI
@@ -40,7 +36,7 @@ public:
     void playWithAudioThenStop(string i);
     
     ofTrueTypeFont font;
-    ofxOscSender sender1, sender2, sender3, sender4, senderLocal;
+    ofxOscSender sender1, sender2, sender3, sender4;
     ofBuffer imgAsBuffer;
     ofImage img;
     ofSoundPlayer soundPlayer;
@@ -51,11 +47,11 @@ public:
     
     ofxDatGuiButton* playButton, *loopButton;
     
-    string pi1_ip, pi2_ip, pi3_ip, pi4_ip, local_ip;
+    string pi1_ip, pi2_ip, pi3_ip, pi4_ip;
     string folder_path1, folder_path2, folder_path3, folder_path4;
     int iPiVideoPort = 9000;
     
-    int iPiAudioPort, m_iReceivePort;
+    int m_iReceivePort;
     
     vector<string> playList;
     

@@ -57,13 +57,6 @@ void ofApp::setup(){
     m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/nexus30secKeyboard/audio/";
 #endif
     
-    
-#if OSC_RECEIVER_PLAYS_AUDIO
-    local_ip ="127.0.0.1";
-    iPiAudioPort = 9500;
-    senderLocal.setup(local_ip, iPiAudioPort);
-#endif
-    
     boilerplate();
 }
 
@@ -140,9 +133,6 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
     sender4.sendMessage(m, false);
-#if OSC_RECEIVER_PLAYS_AUDIO
-    senderLocal.sendMessage(m, false);
-#endif
 }
 
 
@@ -152,9 +142,6 @@ void ofApp::playAllVideos(){
         m.setAddress("/play");
         m.addStringArg(folder_path1);
         sender1.sendMessage(m, false);
-#if OSC_RECEIVER_PLAYS_AUDIO
-        senderLocal.sendMessage(m, false);
-#endif
     }
     {
         ofxOscMessage m;
@@ -395,9 +382,6 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             sender2.sendMessage(m2, false);
             sender3.sendMessage(m3, false);
             sender4.sendMessage(m4, false);
-#if OSC_RECEIVER_PLAYS_AUDIO
-            senderLocal.sendMessage(m1, false);
-#endif  //OSC_RECEIVER_PLAYS_AUDIO
 #endif  //OSC_SENDER_PLAYS_AUDIO
         }
     }
