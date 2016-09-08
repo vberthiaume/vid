@@ -47,13 +47,12 @@ void ofApp::setup(){
     m_bLooping = false;
     
     //All IP addresses
-    pi1_ip = "192.168.0.101";
+//    pi1_ip = "192.168.0.101"; //NEW RPI1
+    pi1_ip = "192.168.0.105";   //OLD RPI1
     pi2_ip = "192.168.0.102";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
     
-    //OSC Ports
-    iPiVideoPort = 9000;
     
 #if AUDIO_OSCRECEIVER_MAC
     local_ip ="127.0.0.1";
@@ -63,14 +62,6 @@ void ofApp::setup(){
     
     boilerplate();
 }
-
-//void ofApp::setVolumeToMax(){
-//    //make sure sound is set to 100%
-//    ofxOscMessage m;
-//    m.setAddress("/volume");
-//    m.addIntArg(100);
-//    sendMessageToAll(m);
-//}
 
 void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
     playList = split(e.text, ',');

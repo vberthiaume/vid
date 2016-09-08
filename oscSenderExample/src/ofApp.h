@@ -35,8 +35,8 @@ public:
     void keyPressed(int key);
     
     void sendMessageToAll(ofxOscMessage m);
+    
     void playAllVideos();
-//    void setVolumeToMax();
     void playWithAudioThenStop(string i);
     
     ofTrueTypeFont font;
@@ -53,7 +53,9 @@ public:
     
     string pi1_ip, pi2_ip, pi3_ip, pi4_ip, local_ip;
     string folder_path1, folder_path2, folder_path3, folder_path4;
-    int iPiVideoPort, iPiAudioPort, m_iReceivePort;
+    int iPiVideoPort = 9000;
+    
+    int iPiAudioPort, m_iReceivePort;
     
     vector<string> playList;
     
