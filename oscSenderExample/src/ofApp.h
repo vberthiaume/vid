@@ -7,10 +7,14 @@
 
 #define NUM_MSG_STRINGS 20
 
+#define NUM_RPIS 1
+
 // OPTION 2
 #ifndef OSC_SENDER_PLAYS_AUDIO
 #define OSC_SENDER_PLAYS_AUDIO 1
 #endif
+
+
 
 //--------------------------------------------------------
 class ofApp : public ofBaseApp {
@@ -24,6 +28,7 @@ public:
     void keyPressed(int key);
     
     void sendMessageToAll(ofxOscMessage m);
+    void sendAndConfirmMessageToAll(ofxOscMessage m);
     
     void playAllVideos();
     void playWithAudioThenStop(string i);
@@ -61,5 +66,17 @@ public:
 #endif
     
     string m_sMacAudioPath;
+    
+    bool m_bOscConfirmations[NUM_RPIS];
+    int m_iOscAllConfirmed = 0;
+    void confirmMessage(ofxOscMessage m);
+    
+    bool m_bNeedOscConf = false;
+    
+    void resetOscConfs(){
+        for (int i=0; i<NUM_RPIS; ++i){
+            m_bOscConfirmations[i] = false;
+        }
+    }
 };
 

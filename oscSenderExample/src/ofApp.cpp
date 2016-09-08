@@ -38,7 +38,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
     split(s, delim, elems);
     return elems;
 }
-//--------------------------------------------------------------
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 void ofApp::setup(){
 
@@ -58,10 +60,6 @@ void ofApp::setup(){
 #endif
     
     boilerplate();
-}
-
-void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
-    playList = split(e.text, ',');
 }
 
 void ofApp::keyPressed(int key){
@@ -106,7 +104,8 @@ void ofApp::keyPressed(int key){
     if(key == 'i' || key == 'I'){
         ofxOscMessage m;
         m.setAddress("/info");
-        sendMessageToAll(m);
+//        sendMessageToAll(m);
+        sendAndConfirmMessageToAll(m);
     }
     //quit HPlayer
     if(key == 'Q'){
@@ -128,44 +127,77 @@ void ofApp::keyPressed(int key){
 }
 
 
-void ofApp::sendMessageToAll(ofxOscMessage m){
-    sender1.sendMessage(m, false);
-    sender2.sendMessage(m, false);
-    sender3.sendMessage(m, false);
-    sender4.sendMessage(m, false);
-}
-
 
 void ofApp::playAllVideos(){
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path1);
+        ofxOscMessage m1, m2, m3, m4;
+        m1.setAddress("/play");
+        m1.addStringArg(folder_path1);
+        sender1.sendMessage(m1, false);
+        m2.setAddress("/play");
+        m2.addStringArg(folder_path2);
+        sender2.sendMessage(m2, false);
+        m3.setAddress("/play");
+        m3.addStringArg(folder_path3);
+        sender3.sendMessage(m3, false);
+        m4.setAddress("/play");
+        m4.addStringArg(folder_path4);
+        sender4.sendMessage(m4, false);
+}
+
+void ofApp::sendAndConfirmMessageToAll(ofxOscMessage m){
+    m_bNeedOscConf = true;
+//    while(m_iOscAllConfirmed < NUM_RPIS){
+//        ofSleepMillis(500);
         sender1.sendMessage(m, false);
-    }
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path2);
         sender2.sendMessage(m, false);
-    }
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path3);
         sender3.sendMessage(m, false);
-    }
-    {
-        ofxOscMessage m;
-        m.setAddress("/play");
-        m.addStringArg(folder_path4);
         sender4.sendMessage(m, false);
+//    }
+    m_iOscAllConfirmed = 0;
+    resetOscConfs();
+}
+
+bool hasEnding (std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
     }
 }
 
+void ofApp::confirmMessage(ofxOscMessage m){
+    string sIp = m.getRemoteIp();
+    if (hasEnding(sIp, "1")){
+        m_bOscConfirmations[0] = true;
+        ++m_iOscAllConfirmed;
+        cout << "confirm RPI1\n";
+    }
+    else if (hasEnding(sIp, "2")){
+        m_bOscConfirmations[1] = true;
+        ++m_iOscAllConfirmed;
+        cout << "confirm RPI2\n";
+    }
+    else if (hasEnding(sIp, "3")){
+        m_bOscConfirmations[2] = true;
+        ++m_iOscAllConfirmed;
+        cout << "confirm RPI3\n";
+    }
+    else if (hasEnding(sIp, "4")){
+        m_bOscConfirmations[3] = true;
+        ++m_iOscAllConfirmed;
+        cout << "confirm RPI4\n";
+    }
+    else if (hasEnding(sIp, "5")){
+        m_bOscConfirmations[0] = true;
+        ++m_iOscAllConfirmed;
+        cout << "confirm old RPI1i\n";
+    }
+    
+}
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    //update gui stuff
     filesToPlayTextInput->update();
     playButton->update();
     loopButton->update();
@@ -182,16 +214,30 @@ void ofApp::update(){
         // get the next message
         ofxOscMessage m;
         receiver.getNextMessage(m);
+        confirmMessage(m);
         printMsgs(m);
     }
+    
+#if OSC_SENDER_PLAYS_AUDIO
+    if (m_bStartedSoundPlayer){
+        if (soundPlayer.isPlaying()){
+            m_bSoundPlayerIsPlaying = true;
+        } else {
+            ofxOscMessage mStop;
+            mStop.setAddress("/stop");
+            sendMessageToAll(mStop);
+            m_bSoundPlayerIsPlaying = false;
+            m_bStartedSoundPlayer = false;
+        }
+    }
+#endif
 }
 
 void ofApp::printMsgs(ofxOscMessage &m){
     
     bool DISPLAY_ALL = false;
     
-    string msg_string;
-    msg_string = "IP: " + m.getRemoteIp();
+    string msg_string = "IP: " + m.getRemoteIp();
     
     if (DISPLAY_ALL) msg_string += ", port: " + m.getAddress();;
     
@@ -251,21 +297,6 @@ void ofApp::draw(){
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
         ofDrawBitmapString(msg_strings[i], x, y + 15 * i);
     }
-    
-#if OSC_SENDER_PLAYS_AUDIO
-    if (m_bStartedSoundPlayer){
-        if (soundPlayer.isPlaying()){
-            m_bSoundPlayerIsPlaying = true;
-        } else {
-            ofxOscMessage mStop;
-            mStop.setAddress("/stop");
-            sendMessageToAll(mStop);
-            m_bSoundPlayerIsPlaying = false;
-            m_bStartedSoundPlayer = false;
-        }
-    }
-#endif
-    
 }
 
 #if OSC_SENDER_PLAYS_AUDIO
@@ -292,6 +323,9 @@ void ofApp::playWithAudioThenStop(string strFileNumber){
 }
 #endif
 
+void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
+    playList = split(e.text, ',');
+}
 
 //custom playlist
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
@@ -376,9 +410,18 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     }
 }
 
+void ofApp::sendMessageToAll(ofxOscMessage m){
+    sender1.sendMessage(m, false);
+    sender2.sendMessage(m, false);
+    sender3.sendMessage(m, false);
+    sender4.sendMessage(m, false);
+}
 
 
 void ofApp::boilerplate(){
+    
+    resetOscConfs();
+    
     //main folder paths. Pressing 'p' or 'l' will play or loop all media files in these folders
     folder_path1 = "/media/pi/usb1/";
     folder_path2 = "/media/pi/usb2/";
