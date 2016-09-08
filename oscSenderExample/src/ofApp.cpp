@@ -83,8 +83,6 @@ void ofApp::keyPressed(int key){
         //        soundPlayer.play();
     }
     
-
-    
     //stop playing
     if( key == 's' || key == 'S'){
         ofxOscMessage m;
@@ -92,22 +90,19 @@ void ofApp::keyPressed(int key){
         sendMessageToAll(m);
         //        soundPlayer.stop();
     }
-    
+
+#warning next and back may return previous file name as playing
     //play next video
     if( key == 'n' || key == 'N'){
         ofxOscMessage m;
         m.setAddress("/next");
         sendMessageToAll(m);
-//        m.setAddress("/loop");
-//        sendMessageToAll(m);
     }
     //play previous video
     if( key == 'b' || key == 'B'){
         ofxOscMessage m;
         m.setAddress("/prev");
         sendMessageToAll(m);
-//        m.setAddress("/loop");
-//        sendMessageToAll(m);
     }
     //toggle info screen
     if(key == 'i' || key == 'I'){
@@ -125,6 +120,12 @@ void ofApp::keyPressed(int key){
         ofxOscMessage m;
         m.setAddress("/getStatus");
         sendMessageToAll(m);
+    }
+    if(key == 'c'){
+        for(int i = 0; i < NUM_MSG_STRINGS; i++){
+            msg_strings[i] = "";
+        }
+        current_msg_string = 0;
     }
 }
 
