@@ -78,5 +78,9 @@ public:
             m_bOscConfirmations[i] = false;
         }
     }
+    
+    long m_lUpdateCtr = 0;
+    
+    ofxOscMessage m_oLastOscMsgSent;
 };
 

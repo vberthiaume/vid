@@ -146,15 +146,14 @@ void ofApp::playAllVideos(){
 
 void ofApp::sendAndConfirmMessageToAll(ofxOscMessage m){
     m_bNeedOscConf = true;
+    m_oLastOscMsgSent = m;
 //    while(m_iOscAllConfirmed < NUM_RPIS){
 //        ofSleepMillis(500);
-        sender1.sendMessage(m, false);
-        sender2.sendMessage(m, false);
-        sender3.sendMessage(m, false);
-        sender4.sendMessage(m, false);
+        sendMessageToAll(m);
 //    }
-    m_iOscAllConfirmed = 0;
-    resetOscConfs();
+
+//    m_iOscAllConfirmed = 0;
+//    resetOscConfs();
 }
 
 bool hasEnding (std::string const &fullString, std::string const &ending) {
@@ -217,6 +216,21 @@ void ofApp::update(){
         confirmMessage(m);
         printMsgs(m);
     }
+    
+    if (m_bNeedOscConf){
+        if (++m_lUpdateCtr % 1000 == 0){
+            if (m_iOscAllConfirmed < NUM_RPIS){
+                sendMessageToAll(m_oLastOscMsgSent);
+            } else {
+                m_iOscAllConfirmed = 0;
+                resetOscConfs();
+            }
+
+        }
+    } else {
+        m_lUpdateCtr = 0;
+    }
+    
     
 #if OSC_SENDER_PLAYS_AUDIO
     if (m_bStartedSoundPlayer){
