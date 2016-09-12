@@ -14,6 +14,10 @@
 #define OSC_SENDER_PLAYS_AUDIO 1
 #endif
 
+#ifndef NEW_PRINT
+#define NEW_PRINT 0
+#endif
+
 
 
 //--------------------------------------------------------
@@ -28,10 +32,9 @@ public:
     void keyPressed(int key);
     
     void sendMessageToAll(ofxOscMessage m);
-    void sendAndConfirmMessageToAll(ofxOscMessage m);
     
     void playAllVideos();
-    void playWithAudioThenStop(string i);
+    void playWithAudio(string i);
     
     ofTrueTypeFont font;
     ofxOscSender sender1, sender2, sender3, sender4;
@@ -82,5 +85,8 @@ public:
     long m_lUpdateCtr = 0;
     
     ofxOscMessage m_oLastOscMsgSent;
+    
+    string m_sRpiStatuses[NUM_RPIS];
+    
 };
 

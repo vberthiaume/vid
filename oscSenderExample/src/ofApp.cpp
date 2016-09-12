@@ -48,8 +48,9 @@ void ofApp::setup(){
     ofSetFrameRate(20);
     
     //All IP addresses
-//    pi1_ip = "192.168.0.101"; //NEW RPI1
-    pi1_ip = "192.168.0.105";   //OLD RPI1
+//    pi1_ip = "192.168.0.101";   //NEW RPI1
+//    pi1_ip = "192.168.0.105";   //OLD RPI1
+    pi1_ip = "10.226.226.229";    //SCHOOL
     pi2_ip = "192.168.0.102";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
@@ -104,8 +105,8 @@ void ofApp::keyPressed(int key){
     if(key == 'i' || key == 'I'){
         ofxOscMessage m;
         m.setAddress("/info");
-//        sendMessageToAll(m);
-        sendAndConfirmMessageToAll(m);
+        sendMessageToAll(m);
+//        sendAndConfirmMessageToAll(m);
     }
     //quit HPlayer
     if(key == 'Q'){
@@ -126,8 +127,6 @@ void ofApp::keyPressed(int key){
     }
 }
 
-
-
 void ofApp::playAllVideos(){
         ofxOscMessage m1, m2, m3, m4;
         m1.setAddress("/play");
@@ -144,18 +143,6 @@ void ofApp::playAllVideos(){
         sender4.sendMessage(m4, false);
 }
 
-void ofApp::sendAndConfirmMessageToAll(ofxOscMessage m){
-    m_bNeedOscConf = true;
-    m_oLastOscMsgSent = m;
-//    while(m_iOscAllConfirmed < NUM_RPIS){
-//        ofSleepMillis(500);
-        sendMessageToAll(m);
-//    }
-
-//    m_iOscAllConfirmed = 0;
-//    resetOscConfs();
-}
-
 bool hasEnding (std::string const &fullString, std::string const &ending) {
     if (fullString.length() >= ending.length()) {
         return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
@@ -166,32 +153,26 @@ bool hasEnding (std::string const &fullString, std::string const &ending) {
 
 void ofApp::confirmMessage(ofxOscMessage m){
     string sIp = m.getRemoteIp();
-    if (hasEnding(sIp, "1")){
+    if (hasEnding(sIp, pi1_ip)){
         m_bOscConfirmations[0] = true;
         ++m_iOscAllConfirmed;
         cout << "confirm RPI1\n";
     }
-    else if (hasEnding(sIp, "2")){
+    else if (hasEnding(sIp, pi2_ip)){
         m_bOscConfirmations[1] = true;
         ++m_iOscAllConfirmed;
         cout << "confirm RPI2\n";
     }
-    else if (hasEnding(sIp, "3")){
+    else if (hasEnding(sIp, pi3_ip)){
         m_bOscConfirmations[2] = true;
         ++m_iOscAllConfirmed;
         cout << "confirm RPI3\n";
     }
-    else if (hasEnding(sIp, "4")){
+    else if (hasEnding(sIp, pi4_ip)){
         m_bOscConfirmations[3] = true;
         ++m_iOscAllConfirmed;
         cout << "confirm RPI4\n";
-    }
-    else if (hasEnding(sIp, "5")){
-        m_bOscConfirmations[0] = true;
-        ++m_iOscAllConfirmed;
-        cout << "confirm old RPI1i\n";
-    }
-    
+    }    
 }
 
 //--------------------------------------------------------------
@@ -210,7 +191,6 @@ void ofApp::update(){
     
     // check for waiting osc messages
     while(receiver.hasWaitingMessages()){
-        // get the next message
         ofxOscMessage m;
         receiver.getNextMessage(m);
         confirmMessage(m);
@@ -225,7 +205,6 @@ void ofApp::update(){
                 m_iOscAllConfirmed = 0;
                 resetOscConfs();
             }
-
         }
     } else {
         m_lUpdateCtr = 0;
@@ -249,15 +228,74 @@ void ofApp::update(){
 
 void ofApp::printMsgs(ofxOscMessage &m){
     
+    
+#if NEW_PRINT
+    
+//  IP: 10.226.226.229, STATUS: stoped, FILE: , LOOPING: 0
+//  IP: 10.226.226.229, STATUS: playing, FILE: /media/pi/usb1/video1.mp4, LOOPING: 0
+    
+    //RPI 1: PLAY/LOOP/STOP VIDEO1
+    
+    //figure out which pi
+    string sIp = m.getRemoteIp();
+    int iCurPi;
+    if (hasEnding(sIp, pi1_ip)){
+        iCurPi = 0;
+    } else if (hasEnding(sIp, pi2_ip)){
+        iCurPi = 1;
+    } else if (hasEnding(sIp, pi3_ip)){
+        iCurPi = 2;
+    } else if (hasEnding(sIp, pi4_ip)){
+        iCurPi = 3;
+    }
+    
+    //update corresponding status
+    string sStatus = "";
+    
+    
+    
+    //print all statuses
+    
+    
+    string sIp = m.getRemoteIp();
+    
+    
+    
+    string msg_string = "IP: ";
+    int iTotalArg = m.getNumArgs(), i = -1;
     bool DISPLAY_ALL = false;
+    if (DISPLAY_ALL){
+        msg_string += ", port: " + m.getAddress();
+    }
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += "NAME: "          + m.getArgAsString(i);
+    if (++i < iTotalArg)                msg_string += ", STATUS: "      + m.getArgAsString(i);
+    if (++i < iTotalArg)                msg_string += ", FILE: "        + m.getArgAsString(i);
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", POSITION: "    + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", DURATION: "    + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg)                msg_string += ", LOOPING: "     + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", VOLUME: "      + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", MUTE: "        + m.getArgAsString(i);
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: "        + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: "        + ofToString(m.getArgAsInt(i));
+    
+    // add to the list of strings to display
+    msg_strings[current_msg_string] = msg_string;
+    timers[current_msg_string] = ofGetElapsedTimef() + 10.0f;
+    current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
+    // clear the next line
+    msg_strings[current_msg_string] = "";
+    cout << msg_string << "\n";
+    
+    
+#else
+    
     
     string msg_string = "IP: " + m.getRemoteIp();
-    
-    if (DISPLAY_ALL) msg_string += ", port: " + m.getAddress();;
-    
-    int iTotalArg = m.getNumArgs();
-    int i = -1;
-    
+    int iTotalArg = m.getNumArgs(), i = -1;
+    bool DISPLAY_ALL = false;
+    if (DISPLAY_ALL){
+        msg_string += ", port: " + m.getAddress();
+    }
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += "NAME: " + m.getArgAsString(i);
     if (++i < iTotalArg)                msg_string += ", STATUS: " + m.getArgAsString(i);
     if (++i < iTotalArg)                msg_string += ", FILE: " + m.getArgAsString(i);
@@ -276,6 +314,7 @@ void ofApp::printMsgs(ofxOscMessage &m){
     // clear the next line
     msg_strings[current_msg_string] = "";
     cout << msg_string << "\n";
+#endif
 }
 
 //--------------------------------------------------------------
@@ -314,7 +353,7 @@ void ofApp::draw(){
 }
 
 #if OSC_SENDER_PLAYS_AUDIO
-void ofApp::playWithAudioThenStop(string strFileNumber){
+void ofApp::playWithAudio(string strFileNumber){
     ofxOscMessage m1, m2, m3, m4;
     soundPlayer.load(m_sMacAudioPath + "audio" + strFileNumber + ".wav");
     soundPlayer.play();
@@ -333,7 +372,6 @@ void ofApp::playWithAudioThenStop(string strFileNumber){
     sender2.sendMessage(m2, false);
     sender3.sendMessage(m3, false);
     sender4.sendMessage(m4, false);
-
 }
 #endif
 
@@ -344,7 +382,6 @@ void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
 //custom playlist
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     if (e.target == playButton || e.target == loopButton){
-        //        setVolumeToMax();
         if (playList.size() != 0){
             
             
@@ -353,7 +390,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             m.setAddress("/unloop");
             sendMessageToAll(m);
             for(auto& video : playList){
-                playWithAudioThenStop(video);
+                playWithAudio(video);
             }
 #else
             ofxOscMessage m1, m2, m3, m4;
@@ -425,6 +462,10 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
 }
 
 void ofApp::sendMessageToAll(ofxOscMessage m){
+    
+    m_bNeedOscConf = true;
+    m_oLastOscMsgSent = m;
+    
     sender1.sendMessage(m, false);
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
@@ -464,6 +505,11 @@ void ofApp::boilerplate(){
     loopButton->setWidth(50);
     playButton->onButtonEvent(this, &ofApp::onButtonEvent);
     loopButton->onButtonEvent(this, &ofApp::onButtonEvent);
+    
+    for (int i=0; i<NUM_RPIS; ++i){
+        m_sRpiStatuses[i] = "";
+    }
+        
 }
 
 
