@@ -15,7 +15,7 @@
 #endif
 
 #ifndef NEW_PRINT
-#define NEW_PRINT 0
+#define NEW_PRINT 1
 #endif
 
 

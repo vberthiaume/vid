@@ -250,41 +250,28 @@ void ofApp::printMsgs(ofxOscMessage &m){
     }
     
     //update corresponding status
-    string sStatus = "";
+    int iCurArg = 1;
     
     
-    
-    //print all statuses
-    
-    
-    string sIp = m.getRemoteIp();
-    
+    string sStatus  = m.getArgAsString(iCurArg++);
+    string sFile    = m.getArgAsString(iCurArg++);
+    iCurArg += 2;
+    bool bLoop      = m.getArgAsInt(iCurArg++);
     
     
-    string msg_string = "IP: ";
-    int iTotalArg = m.getNumArgs(), i = -1;
-    bool DISPLAY_ALL = false;
-    if (DISPLAY_ALL){
-        msg_string += ", port: " + m.getAddress();
+    string sCurStatus = "";
+    if (hasEnding(sStatus, "stoped")){
+        sCurStatus += "Stopped";
+    } else {
+        if (bLoop){
+            sCurStatus += "Loop\t";
+        } else {
+            sCurStatus += "Play\t";
+        }
+        sCurStatus += sFile;
     }
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += "NAME: "          + m.getArgAsString(i);
-    if (++i < iTotalArg)                msg_string += ", STATUS: "      + m.getArgAsString(i);
-    if (++i < iTotalArg)                msg_string += ", FILE: "        + m.getArgAsString(i);
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", POSITION: "    + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", DURATION: "    + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg)                msg_string += ", LOOPING: "     + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", VOLUME: "      + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", MUTE: "        + m.getArgAsString(i);
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: "        + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: "        + ofToString(m.getArgAsInt(i));
     
-    // add to the list of strings to display
-    msg_strings[current_msg_string] = msg_string;
-    timers[current_msg_string] = ofGetElapsedTimef() + 10.0f;
-    current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
-    // clear the next line
-    msg_strings[current_msg_string] = "";
-    cout << msg_string << "\n";
+    m_sRpiStatuses[iCurPi] = sCurStatus;
     
     
 #else
@@ -347,9 +334,17 @@ void ofApp::draw(){
     loopButton->draw();
     y += 60;
     
+#if NEW_PRINT
+    //print all statuses
+    for (int iCurPi = 0; iCurPi < NUM_RPIS; ++iCurPi){
+        string str = "RPI" + to_string(iCurPi+1) + ": " + m_sRpiStatuses[iCurPi] + "\n";
+        ofDrawBitmapString(str, x, y + 15 * iCurPi);
+    }
+#else
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
         ofDrawBitmapString(msg_strings[i], x, y + 15 * i);
     }
+#endif
 }
 
 #if OSC_SENDER_PLAYS_AUDIO
