@@ -125,11 +125,6 @@ void ofApp::keyPressed(int key){
         m.setAddress("/quit");
         sendMessageToAll(m);
     }
-    if(key == 'a'){
-        ofxOscMessage m;
-        m.setAddress("/getStatus");
-        sendMessageToAll(m);
-    }
     if(key == 'c'){
         for(int i = 0; i < NUM_MSG_STRINGS; i++){
             msg_strings[i] = "";
