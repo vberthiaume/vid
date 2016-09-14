@@ -32,6 +32,7 @@ public:
     void keyPressed(int key);
     
     void sendMessageToAll(ofxOscMessage m);
+    void resendMessagesToAll();
     
     void playAllVideos();
     void playWithAudio(string i);
@@ -83,7 +84,7 @@ public:
     
     long m_lUpdateCtr = 0;
     
-    ofxOscMessage m_oLastOscMsgSent;
+    ofxOscMessage m_oLastOscMsgSent[NUM_RPIS];
     
     string m_sRpiStatuses[NUM_RPIS];
     

@@ -39,6 +39,14 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
+bool hasEnding (std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -65,11 +73,10 @@ void ofApp::setup(){
 
 void ofApp::keyPressed(int key){
 
-    //play videos one shot(p) or in a loop(l)
-    if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
-        
-        playAllVideos();
-        if(key == 'p' || key == 'P'){
+
+    //toggle looping(l)
+    if(key == 'l' || key == 'L'){
+        if(m_bLooping){
             ofxOscMessage m;
             m.setAddress("/unloop");
             sendMessageToAll(m);
@@ -78,6 +85,11 @@ void ofApp::keyPressed(int key){
             m.setAddress("/loop");
             sendMessageToAll(m);
         }
+        m_bLooping = !m_bLooping;
+    }
+    
+    if(key == 'p' || key == 'P'){
+        playAllVideos();
         //        soundPlayer.play();
     }
     
@@ -128,27 +140,49 @@ void ofApp::keyPressed(int key){
 }
 
 void ofApp::playAllVideos(){
-        ofxOscMessage m1, m2, m3, m4;
-        m1.setAddress("/play");
-        m1.addStringArg(folder_path1);
-        sender1.sendMessage(m1, false);
-        m2.setAddress("/play");
-        m2.addStringArg(folder_path2);
-        sender2.sendMessage(m2, false);
-        m3.setAddress("/play");
-        m3.addStringArg(folder_path3);
-        sender3.sendMessage(m3, false);
-        m4.setAddress("/play");
-        m4.addStringArg(folder_path4);
-        sender4.sendMessage(m4, false);
+    
+    ofxOscMessage m1, m2, m3, m4;
+    m1.setAddress("/play");
+    m2.setAddress("/play");
+    m3.setAddress("/play");
+    m4.setAddress("/play");
+    
+    m_bNeedOscConf = true;
+    m1.addStringArg(folder_path1);
+    sender1.sendMessage(m1, false);
+    m_oLastOscMsgSent[0] = m1;
+
+    m2.addStringArg(folder_path2);
+    sender2.sendMessage(m2, false);
+    m_oLastOscMsgSent[1] = m2;
+    
+    m3.addStringArg(folder_path3);
+    sender3.sendMessage(m3, false);
+    m_oLastOscMsgSent[2] = m3;
+    
+    m4.addStringArg(folder_path4);
+    sender4.sendMessage(m4, false);
+    m_oLastOscMsgSent[3] = m4;
 }
 
-bool hasEnding (std::string const &fullString, std::string const &ending) {
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
-    } else {
-        return false;
+void ofApp::sendMessageToAll(ofxOscMessage m){
+    
+    m_bNeedOscConf = true;
+    for (int i=0; i<NUM_RPIS; ++i) {
+        m_oLastOscMsgSent[i] = m;
     }
+    
+    sender1.sendMessage(m, false);
+    sender2.sendMessage(m, false);
+    sender3.sendMessage(m, false);
+    sender4.sendMessage(m, false);
+}
+
+void ofApp::resendMessagesToAll(){
+    sender1.sendMessage(m_oLastOscMsgSent[0], false);
+    sender2.sendMessage(m_oLastOscMsgSent[1], false);
+    sender3.sendMessage(m_oLastOscMsgSent[2], false);
+    sender4.sendMessage(m_oLastOscMsgSent[3], false);
 }
 
 void ofApp::confirmMessage(ofxOscMessage m){
@@ -170,6 +204,29 @@ void ofApp::confirmMessage(ofxOscMessage m){
         cout << "-4-";
     }    
 }
+
+#if OSC_SENDER_PLAYS_AUDIO
+void ofApp::playWithAudio(string strFileNumber){
+    ofxOscMessage m1, m2, m3, m4;
+    soundPlayer.load(m_sMacAudioPath + "audio" + strFileNumber + ".wav");
+    soundPlayer.play();
+    
+    m_bStartedSoundPlayer = true;
+    
+    m1.setAddress("/play");
+    m2.setAddress("/play");
+    m3.setAddress("/play");
+    m4.setAddress("/play");
+    m1.addStringArg(folder_path1+"video" + strFileNumber + ".mp4");
+    m2.addStringArg(folder_path2+"video" + strFileNumber + ".mp4");
+    m3.addStringArg(folder_path3+"video" + strFileNumber + ".mp4");
+    m4.addStringArg(folder_path4+"video" + strFileNumber + ".mp4");
+    sender1.sendMessage(m1, false);
+    sender2.sendMessage(m2, false);
+    sender3.sendMessage(m3, false);
+    sender4.sendMessage(m4, false);
+}
+#endif
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -208,7 +265,7 @@ void ofApp::update(){
             cout << "\n";
             //if not, send again
             if (!bAllConfirmed){
-                sendMessageToAll(m_oLastOscMsgSent);
+                resendMessagesToAll();
             } else {
                 resetOscConfs();
                 m_bNeedOscConf = false;
@@ -235,8 +292,7 @@ void ofApp::update(){
 }
 
 void ofApp::printMsgs(ofxOscMessage &m){
-    
-    
+
 #if NEW_PRINT
     
 //  IP: 10.226.226.229, STATUS: stoped, FILE: , LOOPING: 0
@@ -355,29 +411,6 @@ void ofApp::draw(){
 #endif
 }
 
-#if OSC_SENDER_PLAYS_AUDIO
-void ofApp::playWithAudio(string strFileNumber){
-    ofxOscMessage m1, m2, m3, m4;
-    soundPlayer.load(m_sMacAudioPath + "audio" + strFileNumber + ".wav");
-    soundPlayer.play();
-
-    m_bStartedSoundPlayer = true;
-    
-    m1.setAddress("/play");
-    m2.setAddress("/play");
-    m3.setAddress("/play");
-    m4.setAddress("/play");
-    m1.addStringArg(folder_path1+"video" + strFileNumber + ".mp4");
-    m2.addStringArg(folder_path2+"video" + strFileNumber + ".mp4");
-    m3.addStringArg(folder_path3+"video" + strFileNumber + ".mp4");
-    m4.addStringArg(folder_path4+"video" + strFileNumber + ".mp4");
-    sender1.sendMessage(m1, false);
-    sender2.sendMessage(m2, false);
-    sender3.sendMessage(m3, false);
-    sender4.sendMessage(m4, false);
-}
-#endif
-
 void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
     playList = split(e.text, ',');
 }
@@ -464,16 +497,8 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     }
 }
 
-void ofApp::sendMessageToAll(ofxOscMessage m){
-    
-    m_bNeedOscConf = true;
-    m_oLastOscMsgSent = m;
-    
-    sender1.sendMessage(m, false);
-    sender2.sendMessage(m, false);
-    sender3.sendMessage(m, false);
-    sender4.sendMessage(m, false);
-}
+
+
 
 
 void ofApp::boilerplate(){
