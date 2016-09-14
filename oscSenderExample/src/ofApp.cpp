@@ -67,6 +67,8 @@ void ofApp::keyPressed(int key){
 
     //play videos one shot(p) or in a loop(l)
     if(key == 'p' || key == 'P' || key == 'l' || key == 'L'){
+        
+        playAllVideos();
         if(key == 'p' || key == 'P'){
             ofxOscMessage m;
             m.setAddress("/unloop");
@@ -76,7 +78,6 @@ void ofApp::keyPressed(int key){
             m.setAddress("/loop");
             sendMessageToAll(m);
         }
-        playAllVideos();
         //        soundPlayer.play();
     }
     
@@ -154,22 +155,18 @@ void ofApp::confirmMessage(ofxOscMessage m){
     string sIp = m.getRemoteIp();
     if (hasEnding(sIp, pi1_ip)){
         m_bOscConfirmations[0] = true;
-        ++m_iOscAllConfirmed;
         cout << "-1-";
     }
     else if (hasEnding(sIp, pi2_ip)){
         m_bOscConfirmations[1] = true;
-        ++m_iOscAllConfirmed;
         cout << "-2-";
     }
     else if (hasEnding(sIp, pi3_ip)){
         m_bOscConfirmations[2] = true;
-        ++m_iOscAllConfirmed;
         cout << "-3-";
     }
     else if (hasEnding(sIp, pi4_ip)){
         m_bOscConfirmations[3] = true;
-        ++m_iOscAllConfirmed;
         cout << "-4-";
     }    
 }
@@ -196,19 +193,23 @@ void ofApp::update(){
         printMsgs(m);
     }
     
+    //if we just sent some messages and need confirmation
     if (m_bNeedOscConf){
+        //check every 10 updates
         if (++m_lUpdateCtr % 10 == 0){
-            if (m_iOscAllConfirmed < NUM_RPIS){
-                cout << "No response from: ";
-                for (int i=1; i<NUM_RPIS+1; ++i){
-                    if (!m_bOscConfirmations[i]){
-                        cout << i << ", ";
-                    }
+            //if all were confirmed
+            bool bAllConfirmed = true;
+            for (int i=0; i<NUM_RPIS; ++i){
+                if (!m_bOscConfirmations[i]){
+                    cout << "no " << i+1 << ", ";
+                    bAllConfirmed = false;
                 }
-                cout << "\n";
+            }
+            cout << "\n";
+            //if not, send again
+            if (!bAllConfirmed){
                 sendMessageToAll(m_oLastOscMsgSent);
             } else {
-                m_iOscAllConfirmed = 0;
                 resetOscConfs();
                 m_bNeedOscConf = false;
             }

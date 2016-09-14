@@ -71,7 +71,6 @@ public:
     string m_sMacAudioPath;
     
     bool m_bOscConfirmations[NUM_RPIS];
-    int m_iOscAllConfirmed = 0;
     void confirmMessage(ofxOscMessage m);
     
     bool m_bNeedOscConf = false;
