@@ -381,12 +381,13 @@ void ofApp::draw(){
 	string buf;
 	buf = "WELCOME TO BARBARA'S INSTALLATION";
 	ofDrawBitmapString(buf, x, y);
-    ofDrawBitmapString("press 'p' to play all videos one shot", x, y+=30);
-    ofDrawBitmapString("press 'l' to loop all videos", x, y+=15);
+    ofDrawBitmapString("press 'p' to play all videos", x, y+=30);
+    ofDrawBitmapString("press 'l' to toggle looping on and off", x, y+=15);
     ofDrawBitmapString("press 's' to stop playing", x, y+=15);
     ofDrawBitmapString("press 'n' to play next video", x, y+=15);
     ofDrawBitmapString("press 'b' to go back to previous video", x, y+=15);
     ofDrawBitmapString("press 'i' to toggle info screen", x, y+=15);
+    ofDrawBitmapString("press 'c' to clear log messages", x, y+=15);
     ofDrawBitmapString("press 'Q' to quit HPlayer", x, y+=15);
     filesToPlayTextInput->setPosition(x, y+=15);
     filesToPlayTextInput->draw();
