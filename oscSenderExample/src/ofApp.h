@@ -7,7 +7,7 @@
 
 #define NUM_MSG_STRINGS 20
 
-#define NUM_RPIS 1
+#define NUM_RPIS 4
 
 // OPTION 2
 #ifndef OSC_SENDER_PLAYS_AUDIO

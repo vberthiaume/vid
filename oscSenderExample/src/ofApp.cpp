@@ -49,8 +49,8 @@ void ofApp::setup(){
     
     //All IP addresses
 //    pi1_ip = "192.168.0.101";   //NEW RPI1
-//    pi1_ip = "192.168.0.105";   //OLD RPI1
-    pi1_ip = "10.226.226.229";    //SCHOOL
+    pi1_ip = "192.168.0.105";   //OLD RPI1
+//    pi1_ip = "10.226.226.229";    //SCHOOL
     pi2_ip = "192.168.0.102";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
@@ -106,7 +106,6 @@ void ofApp::keyPressed(int key){
         ofxOscMessage m;
         m.setAddress("/info");
         sendMessageToAll(m);
-//        sendAndConfirmMessageToAll(m);
     }
     //quit HPlayer
     if(key == 'Q'){
@@ -156,22 +155,22 @@ void ofApp::confirmMessage(ofxOscMessage m){
     if (hasEnding(sIp, pi1_ip)){
         m_bOscConfirmations[0] = true;
         ++m_iOscAllConfirmed;
-        cout << "confirm RPI1\n";
+        cout << "-1-";
     }
     else if (hasEnding(sIp, pi2_ip)){
         m_bOscConfirmations[1] = true;
         ++m_iOscAllConfirmed;
-        cout << "confirm RPI2\n";
+        cout << "-2-";
     }
     else if (hasEnding(sIp, pi3_ip)){
         m_bOscConfirmations[2] = true;
         ++m_iOscAllConfirmed;
-        cout << "confirm RPI3\n";
+        cout << "-3-";
     }
     else if (hasEnding(sIp, pi4_ip)){
         m_bOscConfirmations[3] = true;
         ++m_iOscAllConfirmed;
-        cout << "confirm RPI4\n";
+        cout << "-4-";
     }    
 }
 
@@ -198,12 +197,20 @@ void ofApp::update(){
     }
     
     if (m_bNeedOscConf){
-        if (++m_lUpdateCtr % 1000 == 0){
+        if (++m_lUpdateCtr % 10 == 0){
             if (m_iOscAllConfirmed < NUM_RPIS){
+                cout << "No response from: ";
+                for (int i=1; i<NUM_RPIS+1; ++i){
+                    if (!m_bOscConfirmations[i]){
+                        cout << i << ", ";
+                    }
+                }
+                cout << "\n";
                 sendMessageToAll(m_oLastOscMsgSent);
             } else {
                 m_iOscAllConfirmed = 0;
                 resetOscConfs();
+                m_bNeedOscConf = false;
             }
         }
     } else {
