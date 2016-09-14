@@ -73,7 +73,6 @@ void ofApp::setup(){
 
 void ofApp::keyPressed(int key){
 
-
     //toggle looping(l)
     if(key == 'l' || key == 'L'){
         if(m_bLooping){
@@ -186,24 +185,49 @@ void ofApp::resendMessagesToAll(){
 }
 
 void ofApp::confirmMessage(ofxOscMessage m){
+    //figure out which pi
     string sIp = m.getRemoteIp();
     string msgContent = getMsgContent(m);
+    int iCurPi;
     if (hasEnding(sIp, pi1_ip)){
+        iCurPi = 0;
         m_bOscConfirmations[0] = true;
         logMsg("got msg from 1: " + msgContent);
     }
     else if (hasEnding(sIp, pi2_ip)){
+        iCurPi = 1;
         m_bOscConfirmations[1] = true;
         logMsg("got msg from 2: " + msgContent);
     }
     else if (hasEnding(sIp, pi3_ip)){
+        iCurPi = 2;
         m_bOscConfirmations[2] = true;
         logMsg("got msg from 3: " + msgContent);
     }
     else if (hasEnding(sIp, pi4_ip)){
+        iCurPi = 3;
         m_bOscConfirmations[3] = true;
         logMsg("got msg from 4: " + msgContent);
     }
+    
+    //update corresponding status
+    string sCurStatus = "";
+    int iCurArg = 1;
+    string sStatus  = m.getArgAsString(iCurArg++);
+    string sFile    = m.getArgAsString(iCurArg++);
+    iCurArg += 2;
+    bool bLoop      = m.getArgAsInt(iCurArg++);
+    if (hasEnding(sStatus, "stoped")){
+        sCurStatus += "Stopped";
+    } else {
+        if (bLoop){
+            sCurStatus += "Loop\t";
+        } else {
+            sCurStatus += "Play\t";
+        }
+        sCurStatus += sFile;
+    }
+    m_sRpiStatuses[iCurPi] = sCurStatus;
 }
 
 string ofApp::getMsgContent(ofxOscMessage m){
@@ -270,7 +294,6 @@ void ofApp::update(){
         ofxOscMessage m;
         receiver.getNextMessage(m);
         confirmMessage(m);
-        printMsgs(m);
     }
     
     //if we just sent some messages and need confirmation
@@ -320,51 +343,6 @@ void ofApp::logMsg(string msg_string){
     current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
     // clear the next line
     msg_strings[current_msg_string] = "";
-}
-
-void ofApp::printMsgs(ofxOscMessage &m){
-    
-//  IP: 10.226.226.229, STATUS: stoped, FILE: , LOOPING: 0
-//  IP: 10.226.226.229, STATUS: playing, FILE: /media/pi/usb1/video1.mp4, LOOPING: 0
-    
-    //RPI 1: PLAY/LOOP/STOP VIDEO1
-    
-    //figure out which pi
-    string sIp = m.getRemoteIp();
-    int iCurPi;
-    if (hasEnding(sIp, pi1_ip)){
-        iCurPi = 0;
-    } else if (hasEnding(sIp, pi2_ip)){
-        iCurPi = 1;
-    } else if (hasEnding(sIp, pi3_ip)){
-        iCurPi = 2;
-    } else if (hasEnding(sIp, pi4_ip)){
-        iCurPi = 3;
-    }
-    
-    //update corresponding status
-    int iCurArg = 1;
-    
-    
-    string sStatus  = m.getArgAsString(iCurArg++);
-    string sFile    = m.getArgAsString(iCurArg++);
-    iCurArg += 2;
-    bool bLoop      = m.getArgAsInt(iCurArg++);
-    
-    
-    string sCurStatus = "";
-    if (hasEnding(sStatus, "stoped")){
-        sCurStatus += "Stopped";
-    } else {
-        if (bLoop){
-            sCurStatus += "Loop\t";
-        } else {
-            sCurStatus += "Play\t";
-        }
-        sCurStatus += sFile;
-    }
-    
-    m_sRpiStatuses[iCurPi] = sCurStatus;
 }
 
 //--------------------------------------------------------------
