@@ -189,20 +189,20 @@ void ofApp::confirmMessage(ofxOscMessage m){
     string sIp = m.getRemoteIp();
     if (hasEnding(sIp, pi1_ip)){
         m_bOscConfirmations[0] = true;
-        cout << "-1-";
+        logMsg("got msg from 1");
     }
     else if (hasEnding(sIp, pi2_ip)){
         m_bOscConfirmations[1] = true;
-        cout << "-2-";
+        logMsg("got msg from 2");
     }
     else if (hasEnding(sIp, pi3_ip)){
         m_bOscConfirmations[2] = true;
-        cout << "-3-";
+        logMsg("got msg from 3");
     }
     else if (hasEnding(sIp, pi4_ip)){
         m_bOscConfirmations[3] = true;
-        cout << "-4-";
-    }    
+        logMsg("got msg from 4");
+    }
 }
 
 #if OSC_SENDER_PLAYS_AUDIO
@@ -258,11 +258,10 @@ void ofApp::update(){
             bool bAllConfirmed = true;
             for (int i=0; i<NUM_RPIS; ++i){
                 if (!m_bOscConfirmations[i]){
-                    cout << "no " << i+1 << ", ";
+                    logMsg("no " + to_string(i+1));
                     bAllConfirmed = false;
                 }
             }
-            cout << "\n";
             //if not, send again
             if (!bAllConfirmed){
                 resendMessagesToAll();
@@ -289,6 +288,15 @@ void ofApp::update(){
         }
     }
 #endif
+}
+
+void ofApp::logMsg(string msg_string){
+    // add to the list of strings to display
+    msg_strings[current_msg_string] = msg_string;
+    timers[current_msg_string] = ofGetElapsedTimef() + 10.0f;
+    current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
+    // clear the next line
+    msg_strings[current_msg_string] = "";
 }
 
 void ofApp::printMsgs(ofxOscMessage &m){
@@ -358,13 +366,8 @@ void ofApp::printMsgs(ofxOscMessage &m){
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
     if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
     
-    // add to the list of strings to display
-    msg_strings[current_msg_string] = msg_string;
-    timers[current_msg_string] = ofGetElapsedTimef() + 10.0f;
-    current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
-    // clear the next line
-    msg_strings[current_msg_string] = "";
-    cout << msg_string << "\n";
+    logMsg(msg_string);
+
 #endif
 }
 
@@ -396,19 +399,23 @@ void ofApp::draw(){
     loopButton->setPosition(x+300+5+75+5, y);
     playButton->draw();
     loopButton->draw();
-    y += 60;
+    y += 45;
     
-#if NEW_PRINT
+
     //print all statuses
     for (int iCurPi = 0; iCurPi < NUM_RPIS; ++iCurPi){
         string str = "RPI" + to_string(iCurPi+1) + ": " + m_sRpiStatuses[iCurPi] + "\n";
-        ofDrawBitmapString(str, x, y + 15 * iCurPi);
+        ofDrawBitmapString(str, x, y += 15);
     }
-#else
+    y+=15;
+    ofDrawBitmapString("------------------------------------------", x, y);
+    
+    //print received osc messages
+    y += 60;
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
         ofDrawBitmapString(msg_strings[i], x, y + 15 * i);
     }
-#endif
+
 }
 
 void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {

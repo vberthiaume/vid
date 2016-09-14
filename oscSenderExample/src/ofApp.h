@@ -62,6 +62,7 @@ public:
     string msg_strings[NUM_MSG_STRINGS];
     float timers[NUM_MSG_STRINGS];
     void printMsgs    (ofxOscMessage &m);
+    void logMsg(string msg_string);
     
     bool m_bLooping = false;
 #if OSC_SENDER_PLAYS_AUDIO
