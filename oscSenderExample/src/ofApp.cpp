@@ -175,10 +175,18 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
 }
 
 void ofApp::resendMessagesToAll(){
-    sender1.sendMessage(m_oLastOscMsgSent[0], false);
-    sender2.sendMessage(m_oLastOscMsgSent[1], false);
-    sender3.sendMessage(m_oLastOscMsgSent[2], false);
-    sender4.sendMessage(m_oLastOscMsgSent[3], false);
+    
+    if (soundPlayer.isPlaying()){
+        //need to restart audio
+        playWithAudio(playList[m_iCurPlaylistItem]);
+    } else {
+        sender1.sendMessage(m_oLastOscMsgSent[0], false);
+        sender2.sendMessage(m_oLastOscMsgSent[1], false);
+        sender3.sendMessage(m_oLastOscMsgSent[2], false);
+        sender4.sendMessage(m_oLastOscMsgSent[3], false);
+    }
+    
+    
 }
 
 void ofApp::confirmMessage(ofxOscMessage m){
@@ -264,9 +272,9 @@ void ofApp::playWithAudio(string strFileNumber){
     m3.setAddress("/play");
     m4.setAddress("/play");
     m1.addStringArg(folder_path1+"video" + strFileNumber + ".mp4");
-    m2.addStringArg(folder_path2+"video" + strFileNumber + ".mp4");
-    m3.addStringArg(folder_path3+"video" + strFileNumber + ".mp4");
-    m4.addStringArg(folder_path4+"video" + strFileNumber + ".mp4");
+    m2.addStringArg(folder_path2+"video" + strFileNumber + ".mov");
+    m3.addStringArg(folder_path3+"video" + strFileNumber + ".mov");
+    m4.addStringArg(folder_path4+"video" + strFileNumber + ".mov");
     sender1.sendMessage(m1, false);
     sender2.sendMessage(m2, false);
     sender3.sendMessage(m3, false);
@@ -280,7 +288,6 @@ void ofApp::playWithAudio(string strFileNumber){
 }
 
 void ofApp::soundPlayerJustStoppedPlaying(){
-    
     if (++m_iCurPlaylistItem < playList.size()){
         playWithAudio(playList[m_iCurPlaylistItem]);
     } else {
@@ -293,7 +300,6 @@ void ofApp::soundPlayerJustStoppedPlaying(){
             m_bStartedSoundPlayer = false;
         }
     }
-    
 }
 
 #endif
@@ -425,23 +431,14 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
 #if OSC_SENDER_PLAYS_AUDIO
             m_bLooping = (e.target == loopButton);
             playWithAudio(playList[m_iCurPlaylistItem]);
-            
 #else
             ofxOscMessage m1, m2, m3, m4;
             if (e.target == playButton){
-                cout << "play\n";
-                //                ofxOscMessage m;
-                //                m.setAddress("/unloop");
-                //                sendMessageToAll(m);
                 m1.setAddress("/play");
                 m2.setAddress("/play");
                 m3.setAddress("/play");
                 m4.setAddress("/play");
             } else {
-                cout << "loop\n";
-                //                ofxOscMessage m;
-                //                m.setAddress("/loop");
-                //                sendMessageToAll(m);
                 m1.setAddress("/playloop");
                 m2.setAddress("/playloop");
                 m3.setAddress("/playloop");
@@ -449,37 +446,31 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             }
             for(auto& video : playList){
                 if (video == "1"){
-                    cout << "1\n";
                     m1.addStringArg(folder_path1+"video1.mp4");
                     m2.addStringArg(folder_path2+"video1.mp4");
                     m3.addStringArg(folder_path3+"video1.mp4");
                     m4.addStringArg(folder_path4+"video1.mp4");
                 } else if (video == "2"){
-                    cout << "2\n";
                     m1.addStringArg(folder_path1+"video2.mp4");
                     m2.addStringArg(folder_path2+"video2.mp4");
                     m3.addStringArg(folder_path3+"video2.mp4");
                     m4.addStringArg(folder_path4+"video2.mp4");
                 } else if (video == "3"){
-                    cout << "3\n";
                     m1.addStringArg(folder_path1+"video3.mp4");
                     m2.addStringArg(folder_path2+"video3.mp4");
                     m3.addStringArg(folder_path3+"video3.mp4");
                     m4.addStringArg(folder_path4+"video3.mp4");
                 } else if (video == "4"){
-                    cout << "4\n";
                     m1.addStringArg(folder_path1+"video4.mp4");
                     m2.addStringArg(folder_path2+"video4.mp4");
                     m3.addStringArg(folder_path3+"video4.mp4");
                     m4.addStringArg(folder_path4+"video4.mp4");
                 } else if (video == "5"){
-                    cout << "5\n";
                     m1.addStringArg(folder_path1+"video5.mp4");
                     m2.addStringArg(folder_path2+"video5.mp4");
                     m3.addStringArg(folder_path3+"video5.mp4");
                     m4.addStringArg(folder_path4+"video5.mp4");
                 } else if (video == "6"){
-                    cout << "6\n";
                     m1.addStringArg(folder_path1+"video6.mp4");
                     m2.addStringArg(folder_path2+"video6.mp4");
                     m3.addStringArg(folder_path3+"video6.mp4");
