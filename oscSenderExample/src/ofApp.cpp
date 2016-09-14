@@ -407,13 +407,12 @@ void ofApp::draw(){
         string str = "RPI" + to_string(iCurPi+1) + ": " + m_sRpiStatuses[iCurPi] + "\n";
         ofDrawBitmapString(str, x, y += 15);
     }
-    y+=15;
-    ofDrawBitmapString("------------------------------------------", x, y);
+
+    ofDrawBitmapString("------------------------------------------", x, y+=15);
     
     //print received osc messages
-    y += 60;
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
-        ofDrawBitmapString(msg_strings[i], x, y + 15 * i);
+        ofDrawBitmapString(msg_strings[i], x, y+=15);
     }
 
 }
