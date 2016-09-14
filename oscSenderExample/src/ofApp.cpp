@@ -97,7 +97,9 @@ void ofApp::keyPressed(int key){
         ofxOscMessage m;
         m.setAddress("/stop");
         sendMessageToAll(m);
-        //        soundPlayer.stop();
+        if (soundPlayer.isPlaying()){
+            soundPlayer.stop();
+        }
     }
 
 #warning next and back may return previous file name as playing
@@ -279,8 +281,8 @@ void ofApp::playWithAudio(string strFileNumber){
 
 void ofApp::soundPlayerJustStoppedPlaying(){
     
-    if (m_iCurPlaylistItem < playList.size()){
-        playWithAudio(playList[++m_iCurPlaylistItem]);
+    if (++m_iCurPlaylistItem < playList.size()){
+        playWithAudio(playList[m_iCurPlaylistItem]);
     } else {
         m_iCurPlaylistItem = 0;
         if (!m_bLooping){
