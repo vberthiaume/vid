@@ -2,20 +2,20 @@
 
 //-------------------- ALL HPlayer OSC COMMANDS --------------------
 //    /play [<path1>] [<path2>] ...       : Play the file (or dir) list in order
-//    /playloop [<path1>] [<path2>] ...   : Same as play with playlist loop forced
-//    /load [<path1>] [<path2>] ...       : Pre-Load a playlist
+//    /playloop [<path1>] [<path2>] ...   : Same as play withloop forced
+//    /load [<path1>] [<path2>] ...       : Pre-Load these paths
 //    /volume <0:100>     : Set volume from 0 to 100
 //    /blur <0:100>       : Set blur level from 0 to 100%
 //    /zoom <0:100>       : Set zoom from 0 to 100%
-//    /stop           : Stop and rewind the current playlist
+//    /stop           : Stop and rewind the current list
 //    /pause          : Pause the current file
 //    /resume         : Resume the paused file
 //    /next           : Play the next file in the list
 //    /prev           : Play the previous file in the list
 //    /mute           : Mute the sound
 //    /unmute         : Unmute the sound
-//    /loop           : Enable looping for the current playlist
-//    /unloop         : Disable looping for the current playlist
+//    /loop           : Enable looping
+//    /unloop         : Disable looping
 //    /info           : Toggle media info window
 //    /host <ip>      : Change IP for OSC out
 //    /getStatus      : Ask for status info
@@ -249,12 +249,14 @@ string ofApp::getMsgContent(ofxOscMessage m){
 
 #if OSC_SENDER_PLAYS_AUDIO
 void ofApp::playWithAudio(string strFileNumber){
-    ofxOscMessage m1, m2, m3, m4;
+
     soundPlayer.load(m_sMacAudioPath + "audio" + strFileNumber + ".wav");
     soundPlayer.play();
-    
     m_bStartedSoundPlayer = true;
     
+    m_bNeedOscConf = true;
+    
+    ofxOscMessage m1, m2, m3, m4;
     m1.setAddress("/play");
     m2.setAddress("/play");
     m3.setAddress("/play");
@@ -267,8 +269,34 @@ void ofApp::playWithAudio(string strFileNumber){
     sender2.sendMessage(m2, false);
     sender3.sendMessage(m3, false);
     sender4.sendMessage(m4, false);
+
+    m_oLastOscMsgSent[0] = m1;
+    m_oLastOscMsgSent[1] = m2;
+    m_oLastOscMsgSent[2] = m3;
+    m_oLastOscMsgSent[3] = m4;
+    
 }
+
+void ofApp::soundPlayerJustStoppedPlaying(){
+    
+    if (m_iCurPlaylistItem < playList.size()){
+        playWithAudio(playList[++m_iCurPlaylistItem]);
+    } else {
+        m_iCurPlaylistItem = 0;
+        if (!m_bLooping){
+            ofxOscMessage mStop;
+            mStop.setAddress("/stop");
+            sendMessageToAll(mStop);
+            m_bSoundPlayerIsPlaying = false;
+            m_bStartedSoundPlayer = false;
+        }
+    }
+    
+}
+
 #endif
+
+
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -315,17 +343,12 @@ void ofApp::update(){
         m_lUpdateCtr = 0;
     }
     
-    
 #if OSC_SENDER_PLAYS_AUDIO
     if (m_bStartedSoundPlayer){
         if (soundPlayer.isPlaying()){
             m_bSoundPlayerIsPlaying = true;
         } else {
-            ofxOscMessage mStop;
-            mStop.setAddress("/stop");
-            sendMessageToAll(mStop);
-            m_bSoundPlayerIsPlaying = false;
-            m_bStartedSoundPlayer = false;
+            soundPlayerJustStoppedPlaying();
         }
     }
 #endif
@@ -387,23 +410,20 @@ void ofApp::draw(){
 
 }
 
+//custom playlist
 void ofApp::onTextInputEvent(ofxDatGuiTextInputEvent e) {
     playList = split(e.text, ',');
 }
 
-//custom playlist
 void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
     if (e.target == playButton || e.target == loopButton){
         if (playList.size() != 0){
             
             
 #if OSC_SENDER_PLAYS_AUDIO
-            ofxOscMessage m;
-            m.setAddress("/unloop");
-            sendMessageToAll(m);
-            for(auto& video : playList){
-                playWithAudio(video);
-            }
+            m_bLooping = (e.target == loopButton);
+            playWithAudio(playList[m_iCurPlaylistItem]);
+            
 #else
             ofxOscMessage m1, m2, m3, m4;
             if (e.target == playButton){
@@ -472,8 +492,6 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
         }
     }
 }
-
-
 
 
 
