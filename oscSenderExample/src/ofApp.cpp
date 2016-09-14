@@ -187,22 +187,45 @@ void ofApp::resendMessagesToAll(){
 
 void ofApp::confirmMessage(ofxOscMessage m){
     string sIp = m.getRemoteIp();
+    string msgContent = getMsgContent(m);
     if (hasEnding(sIp, pi1_ip)){
         m_bOscConfirmations[0] = true;
-        logMsg("got msg from 1");
+        logMsg("got msg from 1: " + msgContent);
     }
     else if (hasEnding(sIp, pi2_ip)){
         m_bOscConfirmations[1] = true;
-        logMsg("got msg from 2");
+        logMsg("got msg from 2: " + msgContent);
     }
     else if (hasEnding(sIp, pi3_ip)){
         m_bOscConfirmations[2] = true;
-        logMsg("got msg from 3");
+        logMsg("got msg from 3: " + msgContent);
     }
     else if (hasEnding(sIp, pi4_ip)){
         m_bOscConfirmations[3] = true;
-        logMsg("got msg from 4");
+        logMsg("got msg from 4: " + msgContent);
     }
+}
+
+string ofApp::getMsgContent(ofxOscMessage m){
+    bool DISPLAY_ALL = false;
+    string msg_string = "";
+    int iTotalArg = m.getNumArgs(), i = -1;
+    
+    if (DISPLAY_ALL){
+        msg_string += ", port: " + m.getAddress();
+    }
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += "NAME: " + m.getArgAsString(i);
+    if (++i < iTotalArg)                msg_string += " " + m.getArgAsString(i);    //STATUS
+    if (++i < iTotalArg)                msg_string += " " + m.getArgAsString(i);    //FILE
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg)                msg_string += ", LOOPING: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", VOLUME: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", MUTE: " + m.getArgAsString(i);
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
+    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
+    
+    return msg_string;
 }
 
 #if OSC_SENDER_PLAYS_AUDIO
@@ -300,8 +323,6 @@ void ofApp::logMsg(string msg_string){
 }
 
 void ofApp::printMsgs(ofxOscMessage &m){
-
-#if NEW_PRINT
     
 //  IP: 10.226.226.229, STATUS: stoped, FILE: , LOOPING: 0
 //  IP: 10.226.226.229, STATUS: playing, FILE: /media/pi/usb1/video1.mp4, LOOPING: 0
@@ -344,31 +365,6 @@ void ofApp::printMsgs(ofxOscMessage &m){
     }
     
     m_sRpiStatuses[iCurPi] = sCurStatus;
-    
-    
-#else
-    
-    
-    string msg_string = "IP: " + m.getRemoteIp();
-    int iTotalArg = m.getNumArgs(), i = -1;
-    bool DISPLAY_ALL = false;
-    if (DISPLAY_ALL){
-        msg_string += ", port: " + m.getAddress();
-    }
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += "NAME: " + m.getArgAsString(i);
-    if (++i < iTotalArg)                msg_string += ", STATUS: " + m.getArgAsString(i);
-    if (++i < iTotalArg)                msg_string += ", FILE: " + m.getArgAsString(i);
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", POSITION: " + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", DURATION: " + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg)                msg_string += ", LOOPING: " + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", VOLUME: " + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", MUTE: " + m.getArgAsString(i);
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", ZOOM: " + ofToString(m.getArgAsInt(i));
-    if (++i < iTotalArg && DISPLAY_ALL) msg_string += ", BLUR: " + ofToString(m.getArgAsInt(i));
-    
-    logMsg(msg_string);
-
-#endif
 }
 
 //--------------------------------------------------------------

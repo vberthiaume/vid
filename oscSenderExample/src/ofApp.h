@@ -14,12 +14,6 @@
 #define OSC_SENDER_PLAYS_AUDIO 1
 #endif
 
-#ifndef NEW_PRINT
-#define NEW_PRINT 1
-#endif
-
-
-
 //--------------------------------------------------------
 class ofApp : public ofBaseApp {
     void boilerplate();
@@ -74,6 +68,7 @@ public:
     
     bool m_bOscConfirmations[NUM_RPIS];
     void confirmMessage(ofxOscMessage m);
+    string getMsgContent(ofxOscMessage m);
     
     bool m_bNeedOscConf = false;
     
