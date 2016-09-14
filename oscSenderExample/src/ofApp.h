@@ -43,7 +43,6 @@ public:
 
     
     //GUI THINGS
-    ofTrueTypeFont font;
     ofBuffer imgAsBuffer;
     ofImage img;
     ofxDatGuiTextInput* filesToPlayTextInput;
