@@ -199,7 +199,7 @@ void ofApp::confirmMessage(ofxOscMessage m){
     //figure out which pi
     string sIp = m.getRemoteIp();
     string msgContent = getMsgContent(m);
-    int iCurPi;
+    int iCurPi = -1;
     if (hasEnding(sIp, pi1_ip)){
         iCurPi = 0;
         m_bOscConfirmations[0] = true;
@@ -219,6 +219,8 @@ void ofApp::confirmMessage(ofxOscMessage m){
         iCurPi = 3;
         m_bOscConfirmations[3] = true;
         logMsg("got msg from 4: " + msgContent);
+    } else {
+        logMsg("got msg from UNKNOWN " + sIp + ": " + msgContent);
     }
     
     //update corresponding status
@@ -325,6 +327,7 @@ void ofApp::update(){
     filesToPlayTextInput->update();
     playButton->update();
     loopButton->update();
+    toggleButton->update();
     
     // hide old osc messages
     for(int i = 0; i < NUM_MSG_STRINGS; i++){
@@ -411,8 +414,10 @@ void ofApp::draw(){
     
     playButton->setPosition(x+300+5, y);
     loopButton->setPosition(x+300+5+75+5, y);
+    toggleButton->setPosition(x+300+5+75+5+75+5, y);
     playButton->draw();
     loopButton->draw();
+    toggleButton->draw();
     y += 45;
     
 
@@ -496,6 +501,12 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
             sender4.sendMessage(m4, false);
 #endif  //OSC_SENDER_PLAYS_AUDIO
         }
+    } else if (e.target == toggleButton){
+        if (toggleButton->getEnabled()){
+            pi1_ip = "192.168.0.105";   //OLD RPI1
+        } else {
+            pi1_ip = "192.168.0.101";   //NEW RPI1
+        }
     }
 }
 
@@ -527,12 +538,20 @@ void ofApp::boilerplate(){
     filesToPlayTextInput = new ofxDatGuiTextInput("Files to play/loop", "");
     filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
     filesToPlayTextInput->setWidth(300, .4);
+    
     playButton = new ofxDatGuiButton("PLAY ONCE");
-    playButton->setWidth(75);
     loopButton = new ofxDatGuiButton("LOOP");
+    toggleButton = new ofxDatGuiToggle("USE OLD RPI1", false);
+    toggleButton->setEnabled(true);
+    
+    playButton->setWidth(75);
     loopButton->setWidth(50);
+    loopButton->setWidth(75);
+    
+    
     playButton->onButtonEvent(this, &ofApp::onButtonEvent);
     loopButton->onButtonEvent(this, &ofApp::onButtonEvent);
+    toggleButton->onButtonEvent(this, &ofApp::onButtonEvent);
     
     for (int i=0; i<NUM_RPIS; ++i){
         m_sRpiStatuses[i] = "";

@@ -48,7 +48,7 @@ public:
     ofxDatGuiTextInput* filesToPlayTextInput;
     void onTextInputEvent(ofxDatGuiTextInputEvent e);
     void onButtonEvent(ofxDatGuiButtonEvent e);
-    ofxDatGuiButton* playButton, *loopButton;
+    ofxDatGuiButton* playButton, *loopButton, *toggleButton;
     
     //OSC RECEIVER THINGS
     int m_iReceivePort;
