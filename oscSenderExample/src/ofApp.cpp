@@ -64,8 +64,8 @@ void ofApp::setup(){
     pi4_ip = "192.168.0.104";
     
 #if OSC_SENDER_PLAYS_AUDIO
-//    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/AAAoriginaux/audio/";
-    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/nexus30secKeyboard/audio/";
+    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/AAAoriginaux/audio/";
+//    m_sMacAudioPath = "/Users/nicolai/Downloads/RPI/nexus30secKeyboard/audio/";
 #endif
     
     boilerplate();
@@ -94,6 +94,7 @@ void ofApp::keyPressed(int key){
     
     //stop playing
     if( key == 's' || key == 'S'){
+        m_bLooping = false;
         ofxOscMessage m;
         m.setAddress("/stop");
         sendMessageToAll(m);
@@ -105,9 +106,14 @@ void ofApp::keyPressed(int key){
 #warning next and back may return previous file name as playing
     //play next video
     if( key == 'n' || key == 'N'){
-        ofxOscMessage m;
-        m.setAddress("/next");
-        sendMessageToAll(m);
+        
+        if (soundPlayer.isPlaying()){
+            soundPlayerJustStoppedPlaying();
+        } else {
+            ofxOscMessage m;
+            m.setAddress("/next");
+            sendMessageToAll(m);
+        }
     }
     //play previous video
     if( key == 'b' || key == 'B'){
@@ -271,7 +277,7 @@ void ofApp::playWithAudio(string strFileNumber){
     m2.setAddress("/play");
     m3.setAddress("/play");
     m4.setAddress("/play");
-    m1.addStringArg(folder_path1+"video" + strFileNumber + ".mp4");
+    m1.addStringArg(folder_path1+"video" + strFileNumber + ".mov");
     m2.addStringArg(folder_path2+"video" + strFileNumber + ".mov");
     m3.addStringArg(folder_path3+"video" + strFileNumber + ".mov");
     m4.addStringArg(folder_path4+"video" + strFileNumber + ".mov");
@@ -288,16 +294,23 @@ void ofApp::playWithAudio(string strFileNumber){
 }
 
 void ofApp::soundPlayerJustStoppedPlaying(){
-    if (++m_iCurPlaylistItem < playList.size()){
+    if (m_bLooping){
+    
+        if (++m_iCurPlaylistItem >= playList.size()){
+            m_iCurPlaylistItem = 0;
+        }
         playWithAudio(playList[m_iCurPlaylistItem]);
+        
     } else {
-        m_iCurPlaylistItem = 0;
-        if (!m_bLooping){
-            ofxOscMessage mStop;
-            mStop.setAddress("/stop");
-            sendMessageToAll(mStop);
-            m_bSoundPlayerIsPlaying = false;
-            m_bStartedSoundPlayer = false;
+        if (++m_iCurPlaylistItem < playList.size()){
+            playWithAudio(playList[m_iCurPlaylistItem]);
+        } else {
+            m_iCurPlaylistItem = 0;
+                ofxOscMessage mStop;
+                mStop.setAddress("/stop");
+                sendMessageToAll(mStop);
+                m_bSoundPlayerIsPlaying = false;
+                m_bStartedSoundPlayer = false;
         }
     }
 }
