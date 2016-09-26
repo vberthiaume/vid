@@ -58,7 +58,6 @@ void ofApp::setup(){
     //All IP addresses
 //    pi1_ip = "192.168.0.101";   //NEW RPI1
     pi1_ip = "192.168.0.105";   //OLD RPI1
-//    pi1_ip = "10.226.226.229";    //SCHOOL
     pi2_ip = "192.168.0.102";
     pi3_ip = "192.168.0.103";
     pi4_ip = "192.168.0.104";
@@ -168,12 +167,10 @@ void ofApp::playAllVideos(){
 }
 
 void ofApp::sendMessageToAll(ofxOscMessage m){
-    
     m_bNeedOscConf = true;
     for (int i=0; i<NUM_RPIS; ++i) {
         m_oLastOscMsgSent[i] = m;
     }
-    
     sender1.sendMessage(m, false);
     sender2.sendMessage(m, false);
     sender3.sendMessage(m, false);
@@ -181,7 +178,6 @@ void ofApp::sendMessageToAll(ofxOscMessage m){
 }
 
 void ofApp::resendMessagesToAll(){
-    
     if (soundPlayer.isPlaying()){
         //need to restart audio
         playWithAudio(playList[m_iCurPlaylistItem]);
@@ -191,8 +187,6 @@ void ofApp::resendMessagesToAll(){
         sender3.sendMessage(m_oLastOscMsgSent[2], false);
         sender4.sendMessage(m_oLastOscMsgSent[3], false);
     }
-    
-    
 }
 
 void ofApp::confirmMessage(ofxOscMessage m){
@@ -507,6 +501,7 @@ void ofApp::onButtonEvent(ofxDatGuiButtonEvent e) {
         } else {
             pi1_ip = "192.168.0.101";   //NEW RPI1
         }
+        sender1.setup(pi1_ip, iPiVideoPort);
     }
 }
 
@@ -539,8 +534,8 @@ void ofApp::boilerplate(){
     filesToPlayTextInput->onTextInputEvent(this, &ofApp::onTextInputEvent);
     filesToPlayTextInput->setWidth(300, .4);
     
-    playButton = new ofxDatGuiButton("PLAY ONCE");
-    loopButton = new ofxDatGuiButton("LOOP");
+    playButton   = new ofxDatGuiButton("PLAY ONCE");
+    loopButton   = new ofxDatGuiButton("LOOP");
     toggleButton = new ofxDatGuiToggle("USE OLD RPI1", false);
     toggleButton->setEnabled(true);
     
